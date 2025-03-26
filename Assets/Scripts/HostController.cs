@@ -1,19 +1,30 @@
 using UnityEngine;
+using Unity.Netcode;
 
-public class Character : MonoBehaviour
+public class HostController : NetworkBehaviour
 {
     private CharacterController controller;
 
     public float speed = 20.0f;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    //void Start()
+    public override void OnNetworkSpawn()
     {
         controller = GetComponent<CharacterController>();
+
+        if (!IsOwner)
+        {
+            // Deactivate camera
+        }
     }
 
-    // Update is called once per frame
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         controller.Move(speed * Time.deltaTime * move);
     }
