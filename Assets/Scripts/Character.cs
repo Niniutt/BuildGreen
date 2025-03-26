@@ -15,6 +15,6 @@ public class Character : MonoBehaviour
     void Update()
     {
         Vector3 move = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        controller.Move(move * Time.deltaTime * speed);
+        controller.Move(speed * Time.deltaTime * move);
     }
 }
