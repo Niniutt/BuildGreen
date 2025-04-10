@@ -30,8 +30,17 @@ public class HostController : NetworkBehaviour
     private float playerHeight;
     private float raycastDistance;
 
-    //void Start()
+    void Start()
+    {
+        Init();
+    }
+
     public override void OnNetworkSpawn()
+    {
+        Init();
+    }
+
+    private void Init()
     {
         // Get rigidbody
         rb = GetComponent<Rigidbody>();
@@ -40,8 +49,11 @@ public class HostController : NetworkBehaviour
         boxCollider = GetComponentInChildren<BoxCollider>();
 
         // Deactivate Main Camera
-        mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        mainCamera.SetActive(false);
+        /*mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
+        if (mainCamera)
+        {
+            mainCamera.SetActive(false);
+        }*/
 
         // Get player camera
         cameraTransform = GetComponentInChildren<Camera>().transform;
@@ -51,8 +63,8 @@ public class HostController : NetworkBehaviour
         raycastDistance = (playerHeight / 2) + 0.2f;
 
         // Hide mouse
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Cursor.lockState = CursorLockMode.Locked;
+        // Cursor.visible = false;
 
         // if (!IsOwner)
     }
