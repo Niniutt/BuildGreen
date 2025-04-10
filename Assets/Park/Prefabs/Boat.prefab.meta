@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ff8cc0a917ea2aa4b9a824a1671a0b2f
+timeCreated: 1462099097
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Boat.prefab
+  uploadId: 155839

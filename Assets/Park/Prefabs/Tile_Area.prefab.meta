@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f7091bdeb24aa4c4497978d79b103410
+timeCreated: 1462099061
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tile_Area.prefab
+  uploadId: 155839

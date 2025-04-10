@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dd407b8b12f4ae245b5d40058a3d72d8
+timeCreated: 1462099070
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Fountain_1.prefab
+  uploadId: 155839

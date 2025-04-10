@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9984667d6d5f2cd408ce06baa515ac52
+timeCreated: 1484242568
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Hovel_Orange.prefab
+  uploadId: 155839

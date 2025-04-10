@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 568b15b1fe7027049b35d9c4fbe502ba
+timeCreated: 1462099063
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Rock.prefab
+  uploadId: 155839

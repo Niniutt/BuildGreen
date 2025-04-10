@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f2cca35a924678c47b34db3927e4d79e
+timeCreated: 1462099100
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/BenchTable.prefab
+  uploadId: 155839

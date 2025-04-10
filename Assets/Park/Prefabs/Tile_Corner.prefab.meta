@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 27a848aa48d18424ca2240da6b86f5b6
+timeCreated: 1462099054
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tile_Corner.prefab
+  uploadId: 155839

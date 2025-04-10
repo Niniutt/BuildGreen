@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a5eed1cf4e0dbcb44a9092a7ba5e87c7
+timeCreated: 1462099077
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Fence_0.prefab
+  uploadId: 155839

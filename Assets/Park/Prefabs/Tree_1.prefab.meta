@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 357a66039fecd22469b4e4ea64729751
+timeCreated: 1462099040
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tree_1.prefab
+  uploadId: 155839

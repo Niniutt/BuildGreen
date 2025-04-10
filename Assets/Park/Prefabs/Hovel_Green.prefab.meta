@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b8f2804faabf68e449f70316b2e677ea
+timeCreated: 1484242570
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Hovel_Green.prefab
+  uploadId: 155839

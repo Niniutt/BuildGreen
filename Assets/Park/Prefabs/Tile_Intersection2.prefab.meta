@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3af4b450458e4094897579b4aa0dfdec
+timeCreated: 1462099048
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tile_Intersection2.prefab
+  uploadId: 155839

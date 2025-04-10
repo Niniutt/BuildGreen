@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ed30ced0d9bec9143b2bec3fc2d49c24
+timeCreated: 1462099095
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Bridge.prefab
+  uploadId: 155839

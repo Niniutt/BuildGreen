@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8248f278a99a4a046823f1fd3bbacc23
+timeCreated: 1462099234
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tree_2_Autumn.prefab
+  uploadId: 155839

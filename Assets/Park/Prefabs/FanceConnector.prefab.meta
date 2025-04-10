@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d6a53a0edb1ca654fa47280067859a4e
+timeCreated: 1462099080
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/FanceConnector.prefab
+  uploadId: 155839

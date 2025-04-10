@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b88abed51b2d2454abab3ce71c0b5875
+timeCreated: 1460576677
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/MainScene.unity
+  uploadId: 155839

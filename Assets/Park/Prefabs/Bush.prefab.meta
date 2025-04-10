@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7712ec26597e75f4f9325357eefd61d4
+timeCreated: 1462099091
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Bush.prefab
+  uploadId: 155839

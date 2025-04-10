@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4089d53e61f85f84a8a4830925f5dbeb
+timeCreated: 1462099047
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61922
+  packageName: Low-Poly Park
+  packageVersion: 1.1
+  assetPath: Assets/Park/Prefabs/Tile_Road.prefab
+  uploadId: 155839
