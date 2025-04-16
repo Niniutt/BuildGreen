@@ -3,8 +3,6 @@ using Unity.Netcode;
 
 public class HostController : NetworkBehaviour
 {
-    private GameObject mainCamera;
-
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private BoxCollider boxCollider;
@@ -24,11 +22,16 @@ public class HostController : NetworkBehaviour
     public float fallMultiplier = 2.5f; // Multiplies gravity when falling down
     public float ascendMultiplier = 2f; // Multiplies gravity for ascending to peak of jump
     private bool isGrounded = true;
-    public LayerMask groundLayer;
     private float groundCheckTimer = 0f;
     private float groundCheckDelay = 0.3f;
     private float playerHeight;
     private float raycastDistance;
+
+    public LayerMask groundLayer;
+    public bool firstPerson = false;
+
+    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -4f);
+    private float thirdPersonRotationX = 60f;
 
     void Start()
     {
@@ -40,6 +43,22 @@ public class HostController : NetworkBehaviour
         Init();
     }
 
+    public void UpdateCameraPerson()
+    {
+        Debug.Log(cameraTransform);
+        if (firstPerson)
+        {
+            // Reset camera transform
+            cameraTransform.localPosition = new Vector3();
+            cameraTransform.localRotation = new Quaternion();
+        }
+        else
+        {
+            cameraTransform.localPosition = thirdPersonCameraPosition;
+            cameraTransform.localRotation = Quaternion.Euler(thirdPersonRotationX, 0f, 0f);
+        }
+    }
+
     private void Init()
     {
         // Get rigidbody
@@ -48,15 +67,13 @@ public class HostController : NetworkBehaviour
 
         boxCollider = GetComponentInChildren<BoxCollider>();
 
-        // Deactivate Main Camera
-        /*mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
-        if (mainCamera)
-        {
-            mainCamera.SetActive(false);
-        }*/
-
         // Get player camera
-        cameraTransform = GetComponentInChildren<Camera>().transform;
+        if (!cameraTransform)
+        {
+            cameraTransform = GetComponentInChildren<Camera>().transform;
+        }
+
+        UpdateCameraPerson();
 
         // Jump raycast init
         playerHeight = boxCollider.size.y * transform.localScale.y;
@@ -72,9 +89,13 @@ public class HostController : NetworkBehaviour
     void Update()
     {
         moveInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+        
+        if (firstPerson)
+        {
+            mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
-        MovePlayerCamera();
+            MovePlayerCamera();
+        }
 
         // Jump
         if (Input.GetButtonDown("Jump") && isGrounded)
