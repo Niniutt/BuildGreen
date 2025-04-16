@@ -12,6 +12,16 @@ public class GridManager : MonoBehaviour
 
     private void Start()
     {
+        
+    }
+
+    private void Update()
+    {
+        
+    }
+
+    /* private void Start()
+    {
         CreateGhostObject();
     }
 
@@ -38,6 +48,7 @@ public class GridManager : MonoBehaviour
             Color color = mat.color;
             color.a = 0.5f;
             mat.color = color;
+            renderer.material = mat;
 
             // mat things
             mat.SetFloat("_Mode", 2);
@@ -78,6 +89,7 @@ public class GridManager : MonoBehaviour
         {
             Material mat = renderer.material;
             mat.color = color;
+            renderer.material = mat;
         }
     }
 
@@ -91,5 +103,5 @@ public class GridManager : MonoBehaviour
 
             occupiedPositions.Add(placementPosition);
         }
-    }
+    }*/
 }

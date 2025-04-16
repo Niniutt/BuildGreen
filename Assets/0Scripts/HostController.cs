@@ -30,8 +30,8 @@ public class HostController : NetworkBehaviour
     public LayerMask groundLayer;
     public bool firstPerson = false;
 
-    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -4f);
-    private float thirdPersonRotationX = 60f;
+    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -4f);
+    private float thirdPersonRotationX = 75f;
 
     void Start()
     {
