@@ -7,6 +7,8 @@ public class HostController : NetworkBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private BoxCollider boxCollider;
     [SerializeField] private GameObject playerMesh;
+    [SerializeField] private Grabber grabber;
+    [SerializeField] private Transform grabberTransform;
 
     [Space]
 
@@ -112,6 +114,19 @@ public class HostController : NetworkBehaviour
         {
             groundCheckTimer -= Time.deltaTime;
         }
+
+        // Grab
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (grabber.hasGrabbed)
+            {
+                Ungrab();
+            }
+            else
+            {
+                Grab();
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -155,5 +170,25 @@ public class HostController : NetworkBehaviour
         {
             rb.linearVelocity += Vector3.up * Physics.gravity.y * ascendMultiplier * Time.fixedDeltaTime;
         }
+    }
+
+    private void Grab()
+    {
+        // Test if there is object in zone = 
+        if (grabber.inZone)
+        {
+            // If yes, put object in child "Grabbed"
+            grabber.hasGrabbed = true;
+            grabber.objectInZone.transform.parent = grabberTransform;
+        }
+    }
+
+    private void Ungrab()
+    {
+        grabber.hasGrabbed = false;
+        // Temp
+        grabber.objectInZone.transform.parent = null;
+        // Place object on closest grid point
+
     }
 }

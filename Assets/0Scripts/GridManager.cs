@@ -5,10 +5,10 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private Grid m_Grid;
 
-    [SerializeField] private GameObject m_Object;
-    [SerializeField] private GameObject m_GhostObject;
+    // [SerializeField] private GameObject m_Object;
+    // [SerializeField] private GameObject m_GhostObject;
 
-    private HashSet<Vector3> occupiedPositions = new HashSet<Vector3>();
+    // private HashSet<Vector3> occupiedPositions = new HashSet<Vector3>();
 
     private void Start()
     {
