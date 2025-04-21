@@ -6,6 +6,7 @@ public class HostController : NetworkBehaviour
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private BoxCollider boxCollider;
+    [SerializeField] private GameObject playerMesh;
 
     [Space]
 
@@ -121,10 +122,11 @@ public class HostController : NetworkBehaviour
 
     private void MovePlayer()
     {
-        move = transform.TransformDirection(moveInput) * speed;
+        move = transform.TransformDirection(moveInput);
+        // If there is input, rotate player in movement direction
+        if (move != new Vector3()) { playerMesh.transform.rotation = Quaternion.LookRotation(move); };
+        move = move * speed;
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
-
-        // Stop sliding
     }
 
     private void MovePlayerCamera()
