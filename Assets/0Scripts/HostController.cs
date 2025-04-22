@@ -200,9 +200,19 @@ public class HostController : NetworkBehaviour
         Vector3 snappedPosition = grid.LocalToCell(point);
         snappedPosition += gridCenterOffset;
 
+
         // Depending on where you place the Phone, y is different. For now we put everything at conveyor belt level.
         snappedPosition.y -= yOffset;
 
         grabber.objectInZone.transform.position = snappedPosition;
+
+        // Check if ungrab is actually a delivery (two possible positions)
+        if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
+        {
+            // Deliver
+            Debug.Log("deliver");
+            Destroy(grabber.objectInZone, 1f);
+            grabber.ResetGrabber();
+        }
     }
 }

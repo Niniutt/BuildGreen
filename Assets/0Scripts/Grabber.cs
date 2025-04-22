@@ -20,11 +20,14 @@ public class Grabber : MonoBehaviour
     {
         if (!hasGrabbed)
         {
-            // Reset data
-            inZone = false;
-            objectInZone = null;
+            ResetGrabber();
         }
     }
 
-    // Does it work correctly? How do we know if player has let go?
+    public void ResetGrabber()
+    {
+        // Reset data
+        inZone = false;
+        objectInZone = null;
+    }
 }
