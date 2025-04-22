@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Drawing;
 
 public class HostController : NetworkBehaviour
 {
@@ -9,6 +10,7 @@ public class HostController : NetworkBehaviour
     [SerializeField] private GameObject playerMesh;
     [SerializeField] private Grabber grabber;
     [SerializeField] private Transform grabberTransform;
+    [SerializeField] private Grid grid;
 
     [Space]
 
@@ -35,6 +37,9 @@ public class HostController : NetworkBehaviour
 
     private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -4f);
     private float thirdPersonRotationX = 75f;
+
+    private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
+    private float yOffset = 0.5f;
 
     void Start()
     {
@@ -180,15 +185,24 @@ public class HostController : NetworkBehaviour
             // If yes, put object in child "Grabbed"
             grabber.hasGrabbed = true;
             grabber.objectInZone.transform.parent = grabberTransform;
+            // Reset transform
+            grabber.objectInZone.transform.localPosition = new Vector3();
+            grabber.objectInZone.transform.localRotation = new Quaternion();
         }
     }
 
     private void Ungrab()
     {
         grabber.hasGrabbed = false;
-        // Temp
+        Vector3 point = grabber.objectInZone.transform.parent.position;
         grabber.objectInZone.transform.parent = null;
-        // Place object on closest grid point
+        // Find closest gridpoint
+        Vector3 snappedPosition = grid.LocalToCell(point);
+        snappedPosition += gridCenterOffset;
 
+        // Depending on where you place the Phone, y is different. For now we put everything at conveyor belt level.
+        snappedPosition.y -= yOffset;
+
+        grabber.objectInZone.transform.position = snappedPosition;
     }
 }

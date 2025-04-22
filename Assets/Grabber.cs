@@ -9,7 +9,7 @@ public class Grabber : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         // Update objectInZone only if there is no object already grabbed
-        if (!hasGrabbed)
+        if (!hasGrabbed && other.gameObject.layer == 6)
         {
             inZone = true;
             objectInZone = other.gameObject;
