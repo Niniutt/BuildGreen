@@ -9991,6 +9991,7 @@ GameObject:
   - component: {fileID: 1110310928}
   - component: {fileID: 1110310927}
   - component: {fileID: 1110310926}
+  - component: {fileID: 1110310930}
   m_Layer: 0
   m_Name: Assembly
   m_TagString: Untagged
@@ -10087,6 +10088,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1110310930
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1110310925}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4daa3c0f30e622e429af41f97598f981, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1115119714
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11940,7 +11953,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1327706373}
   - component: {fileID: 1327706372}
-  - component: {fileID: 1327706374}
   m_Layer: 0
   m_Name: DeliveryZone
   m_TagString: Untagged
@@ -11984,18 +11996,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1327706374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1327706371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f47cda66c7aadf4db88d0d8aaa91231, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1336215540
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -2,6 +2,8 @@ using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
+using static UnityEngine.Rendering.DebugUI;
+using Unity.VisualScripting.FullSerializer;
 
 enum DeviceType
 {
@@ -18,28 +20,44 @@ enum MaterialType
     GLASS = 2,
 }
 
+enum OrderStatus
+{
+    RUNNING = 0,
+    FINISHED = 1,
+    FAILED = 2,
+}
+
 struct Order
 {
     public int ID;
     public int remainingTime;
     public DeviceType deviceType;
+    public OrderStatus status;
 
     public Order(int id, int r, DeviceType d)
     {
         ID = id;
         remainingTime = r;
         deviceType = d;
+        status = OrderStatus.RUNNING;
+    }
+
+    public void print()
+    {
+        Debug.Log("Order " + ID + " with remaining time " + remainingTime + " of device type " + deviceType + " is " + status);
     }
 }
 
 public class LevelManager : MonoBehaviour
 {
-    private float deltaOrders = 5f; // Time between each order
+    private float deltaOrders = 15f; // Time between each order
     private int nbDeviceTypes = 4;
     private int timeOrder = 30; // Max time to deliver an order
     private int lastID = 0;
     private float deltaCheck = 1f;
+    private Order?[] displayOrders = new Order?[3];
     private List<Order> orders = new();
+    private int maxOrders;
 
     void Start()
     {
@@ -47,6 +65,8 @@ public class LevelManager : MonoBehaviour
 
         InvokeRepeating("StartOrder", 0, deltaOrders);
         InvokeRepeating("CheckOrders", deltaCheck, deltaCheck);
+
+        maxOrders = displayOrders.Length;
     }
 
     private void StartOrder ()
@@ -54,7 +74,50 @@ public class LevelManager : MonoBehaviour
         int type = Random.Range(0, nbDeviceTypes - 1);
         lastID += 1;
         Order order = new Order(lastID, timeOrder, (DeviceType)type);
+        Debug.Log("Start order " + lastID + " with " + order.deviceType);
         orders.Add(order);
+        UpdateDisplayOrders();
+    }
+
+    private void UpdateDisplayOrders()
+    {
+        int index = 0;
+        foreach (Order order in orders)
+        {
+            if (order.status == OrderStatus.RUNNING && index < maxOrders)
+            {
+                displayOrders[index] = order;
+                index++;
+            }
+            if (index == maxOrders)
+            {
+                break;
+            }
+        }
+        if (index == 0)
+        {
+            StartOrder();
+        }
+        if (index < maxOrders) // List not completed
+        {
+            for (int i = index; i < maxOrders; i++)
+            {
+                displayOrders[index] = null;
+                index++;
+            }
+        }
+        DisplayOrders();
+    }
+
+    private void DisplayOrders()
+    {
+        foreach (Order? displayOrder in displayOrders)
+        {
+            if (displayOrder.HasValue)
+            {
+                displayOrder.Value.print();
+            }
+        }
     }
 
     private void CheckOrders()
@@ -65,7 +128,7 @@ public class LevelManager : MonoBehaviour
             if (order.remainingTime == 0)
             {
                 // Order lost
-                // Debug.Log("Lost order " + order.ID);
+                Debug.Log("Lost order " + order.ID);
             }
             order.remainingTime -= 1;
             orders[i] = order;
@@ -74,7 +137,42 @@ public class LevelManager : MonoBehaviour
 
     public void DeliverOrder(int type)
     {
-        // deliveryCollider call
-        // Check if there is an order this
+        // Correspond type with DeviceType
+        DeviceType deviceType = (DeviceType)type;
+        Order? nextOrder = null;
+        // Check if there is an order for this device
+        for (int i = 0; i < orders.Count; i++)
+        {
+            if (orders[i].status == OrderStatus.RUNNING) // orders[i].deviceType == deviceType && 
+            {
+                // Change status of order
+                Order currentOrder = orders[i];
+                currentOrder.status = OrderStatus.FINISHED;
+                orders[i] = currentOrder;
+                for(int j = i; j < orders.Count; j++)
+                {
+                    if (orders[j].status == OrderStatus.RUNNING)
+                    {
+                        nextOrder = orders[j];
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        // If we don't find a next order in the list, we make a new one.
+        if (nextOrder == null)
+        {
+            Debug.Log("Can't find order");
+        }
+        // Change display
+        for (int i = 0;i < maxOrders - 1; i++)
+        {
+            if (displayOrders[i + 1].HasValue)
+            {
+                displayOrders[i] = displayOrders[i + 1];
+            }
+        }
+        displayOrders[maxOrders - 1] = nextOrder;
     }
 }
