@@ -40,7 +40,6 @@ public class LevelManager : MonoBehaviour
     private int lastID = 0;
     private float deltaCheck = 1f;
     private List<Order> orders = new();
-    private float destroyDelay = 0.5f;
 
     void Start()
     {
@@ -73,9 +72,9 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    public void DeliverOrder(GameObject obj)
+    public void DeliverOrder(int type)
     {
         // deliveryCollider call
-        Destroy(obj, destroyDelay);
+        // Check if there is an order this
     }
 }

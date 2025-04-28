@@ -11,6 +11,7 @@ public class HostController : NetworkBehaviour
     [SerializeField] private Grabber grabber;
     [SerializeField] private Transform grabberTransform;
     [SerializeField] private Grid grid;
+    [SerializeField] private LevelManager levelManager;
 
     [Space]
 
@@ -40,6 +41,8 @@ public class HostController : NetworkBehaviour
 
     private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
     private float yOffset = 0.5f;
+
+    private float destroyDelay = 0.5f;
 
     void Start()
     {
@@ -209,10 +212,15 @@ public class HostController : NetworkBehaviour
         // Check if ungrab is actually a delivery (two possible positions)
         if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
         {
+            // Get object data
+            int type = 0;
+
             // Deliver
+            levelManager.DeliverOrder(type);
             Debug.Log("deliver");
-            Destroy(grabber.objectInZone, 1f);
+            Destroy(grabber.objectInZone, destroyDelay);
             grabber.ResetGrabber();
+            
         }
     }
 }
