@@ -94,11 +94,11 @@ public class LevelManager : MonoBehaviour
                 break;
             }
         }
-        if (index == 0)
+        if (index == 0) // If  no more running orders, add one
         {
             StartOrder();
         }
-        if (index < maxOrders) // List not completed
+        if (index < maxOrders) // If list not completed
         {
             for (int i = index; i < maxOrders; i++)
             {
@@ -125,13 +125,18 @@ public class LevelManager : MonoBehaviour
         for (int i = 0; i < orders.Count; i++)
         {
             Order order = orders[i];
-            if (order.remainingTime == 0)
+            if (order.status == OrderStatus.RUNNING)
             {
-                // Order lost
-                Debug.Log("Lost order " + order.ID);
+                if (order.remainingTime == 0)
+                {
+                    // Order lost
+                    Debug.Log("Lost order " + order.ID);
+                    order.status = OrderStatus.FAILED;
+                    UpdateDisplayOrders();
+                }
+                order.remainingTime -= 1;
+                orders[i] = order;
             }
-            order.remainingTime -= 1;
-            orders[i] = order;
         }
     }
 
@@ -139,7 +144,6 @@ public class LevelManager : MonoBehaviour
     {
         // Correspond type with DeviceType
         DeviceType deviceType = (DeviceType)type;
-        Order? nextOrder = null;
         // Check if there is an order for this device
         for (int i = 0; i < orders.Count; i++)
         {
@@ -149,30 +153,9 @@ public class LevelManager : MonoBehaviour
                 Order currentOrder = orders[i];
                 currentOrder.status = OrderStatus.FINISHED;
                 orders[i] = currentOrder;
-                for(int j = i; j < orders.Count; j++)
-                {
-                    if (orders[j].status == OrderStatus.RUNNING)
-                    {
-                        nextOrder = orders[j];
-                        break;
-                    }
-                }
-                break;
             }
-        }
-        // If we don't find a next order in the list, we make a new one.
-        if (nextOrder == null)
-        {
-            Debug.Log("Can't find order");
         }
         // Change display
-        for (int i = 0;i < maxOrders - 1; i++)
-        {
-            if (displayOrders[i + 1].HasValue)
-            {
-                displayOrders[i] = displayOrders[i + 1];
-            }
-        }
-        displayOrders[maxOrders - 1] = nextOrder;
+        UpdateDisplayOrders();
     }
 }
