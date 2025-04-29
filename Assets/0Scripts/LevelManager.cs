@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using static UnityEngine.Rendering.DebugUI;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine.UI;
+using TMPro;
+using Random = UnityEngine.Random;
 
 enum DeviceType
 {
@@ -82,6 +84,7 @@ public class LevelManager : MonoBehaviour
         {
             GameObject UIorder = Instantiate(UIPrefab, canvas.transform);
             UIorder.transform.position += new Vector3(i * 120, 0, 0);
+            UIorder.SetActive(false); // Deactivate all before they pop again
             UIorders[i] = UIorder;
         }
     }
@@ -123,22 +126,29 @@ public class LevelManager : MonoBehaviour
                 index++;
             }
         }
-        // DisplayOrders();
     }
 
     private void DisplayOrders()
     {
-        foreach (Order? displayOrder in displayOrders)
+        for (int i = 0; i < MAX_ORDERS; i++)
         {
-            if (displayOrder.HasValue)
+            if (displayOrders[i].HasValue)
             {
-                displayOrder.Value.print();
+                UIorders[i].SetActive(true);
+                TMP_Text text = UIorders[i].GetComponentInChildren<TMP_Text>();
+
+                text.text = "Order " + displayOrders[i].Value.ID + " \n Goal: " + displayOrders[i].Value.deviceType + " \n Time: " + displayOrders[i].Value.remainingTime + " \n Ingredients: ";
+            }
+            else
+            {
+                UIorders[i].SetActive(false);
             }
         }
     }
 
     private void CheckOrders()
     {
+        // This is ran every second
         for (int i = 0; i < orders.Count; i++)
         {
             Order order = orders[i];
@@ -146,15 +156,17 @@ public class LevelManager : MonoBehaviour
             {
                 if (order.remainingTime == 0)
                 {
-                    // Order lost
-                    // Debug.Log("Lost order " + order.ID);
                     order.status = OrderStatus.FAILED;
-                    UpdateDisplayOrders();
                 }
-                order.remainingTime -= 1;
-                orders[i] = order;
+                else
+                {
+                    order.remainingTime -= 1;
+                }
             }
+            orders[i] = order;
+            UpdateDisplayOrders();
         }
+        DisplayOrders();
     }
 
     public void DeliverOrder(int type)
@@ -170,6 +182,7 @@ public class LevelManager : MonoBehaviour
                 Order currentOrder = orders[i];
                 currentOrder.status = OrderStatus.FINISHED;
                 orders[i] = currentOrder;
+                break;
             }
         }
         // Change display

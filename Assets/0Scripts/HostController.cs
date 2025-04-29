@@ -183,7 +183,7 @@ public class HostController : NetworkBehaviour
     private void Grab()
     {
         // Test if there is object in zone = 
-        if (grabber.inZone)
+        if (grabber.inZone && grabber.objectInZone != null)
         {
             // If yes, put object in child "Grabbed"
             grabber.hasGrabbed = true;
