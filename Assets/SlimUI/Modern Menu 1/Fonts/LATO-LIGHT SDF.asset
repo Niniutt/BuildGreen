@@ -23,7 +23,7 @@ MonoBehaviour:
     m_LineHeight: 86.40625
     m_AscentLine: 71.0625
     m_CapLine: 50.96875
-    m_MeanLine: 0
+    m_MeanLine: 35.84375
     m_Baseline: 0
     m_DescentLine: -15.34375
     m_SuperscriptOffset: 71.0625
@@ -6987,6 +6987,7 @@ Material:
     - _BumpFace: 0
     - _BumpOutline: 0
     - _ColorMask: 15
+    - _CullMode: 0
     - _Diffuse: 0.5
     - _FaceDilate: 0
     - _FaceUVSpeedX: 0
@@ -7011,6 +7012,7 @@ Material:
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
+    - _Sharpness: 0
     - _SpecularPower: 2
     - _Stencil: 0
     - _StencilComp: 8
