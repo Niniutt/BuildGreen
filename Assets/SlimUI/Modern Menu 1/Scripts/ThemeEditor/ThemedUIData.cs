@@ -7,21 +7,21 @@ namespace SlimUI.ModernMenu{
 		[System.Serializable]
 		public class Custom1{
 			[Header("Text")]	
-			public Color graphic1;
+			public Color graphic1 = Color.cyan;
 			public Color32 text1;
 		}
 
 		[System.Serializable]
 		public class Custom2{
 			[Header("Text")]	
-			public Color graphic2;
+			public Color graphic2 = Color.cyan;
 			public Color32 text2;
 		}
 
 		[System.Serializable]
 		public class Custom3{
 			[Header("Text")]	
-			public Color graphic3;
+			public Color graphic3 = Color.cyan;
 			public Color32 text3;
 		}
 

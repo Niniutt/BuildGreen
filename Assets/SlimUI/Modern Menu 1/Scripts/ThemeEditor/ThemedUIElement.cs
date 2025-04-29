@@ -18,7 +18,7 @@ namespace SlimUI.ModernMenu{
 
 			if(hasImage){
 				image = GetComponent<Image>();
-				image.color = themeController.currentColor;
+				image.color = Color.cyan; // themeController.currentColor;
 			}
 
 			message = gameObject;

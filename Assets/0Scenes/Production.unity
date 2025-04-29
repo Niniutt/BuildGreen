@@ -13709,6 +13709,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30793e2d40d193747b03a74f13f5cf2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1326364919}
+  UIPrefab: {fileID: 3284893926956191283, guid: a08d0c20ff5c838418cd33694060aaea, type: 3}
 --- !u!1 &1568220272 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3100052853224040035, guid: e86845a18098bae4b83f38956cac4e7e, type: 3}

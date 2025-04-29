@@ -36,7 +36,7 @@ public class HostController : NetworkBehaviour
     public LayerMask groundLayer;
     public bool firstPerson = false;
 
-    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -4f);
+    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -3f);
     private float thirdPersonRotationX = 75f;
 
     private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
@@ -56,7 +56,7 @@ public class HostController : NetworkBehaviour
 
     public void UpdateCameraPerson()
     {
-        Debug.Log(cameraTransform);
+        // Debug.Log(cameraTransform);
         if (firstPerson)
         {
             // Reset camera transform

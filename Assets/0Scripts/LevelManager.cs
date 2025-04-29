@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using static UnityEngine.Rendering.DebugUI;
 using Unity.VisualScripting.FullSerializer;
+using UnityEngine.UI;
 
 enum DeviceType
 {
@@ -50,23 +51,39 @@ struct Order
 
 public class LevelManager : MonoBehaviour
 {
+    private const int MAX_ORDERS = 3;
+
+    [SerializeField] private Canvas canvas;
+    public GameObject UIPrefab;
+    
     private float deltaOrders = 15f; // Time between each order
     private int nbDeviceTypes = 4;
     private int timeOrder = 30; // Max time to deliver an order
     private int lastID = 0;
     private float deltaCheck = 1f;
-    private Order?[] displayOrders = new Order?[3];
+    private Order?[] displayOrders = new Order?[MAX_ORDERS];
     private List<Order> orders = new();
-    private int maxOrders;
+
+    // UI
+    private GameObject[] UIorders = new GameObject[MAX_ORDERS];
 
     void Start()
     {
         // Find canva place and put up a first order
+        InitUI();
 
         InvokeRepeating("StartOrder", 0, deltaOrders);
         InvokeRepeating("CheckOrders", deltaCheck, deltaCheck);
+    }
 
-        maxOrders = displayOrders.Length;
+    private void InitUI()
+    {
+        for (int i = 0; i < MAX_ORDERS; i++)
+        {
+            GameObject UIorder = Instantiate(UIPrefab, canvas.transform);
+            UIorder.transform.position += new Vector3(i * 120, 0, 0);
+            UIorders[i] = UIorder;
+        }
     }
 
     private void StartOrder ()
@@ -74,7 +91,7 @@ public class LevelManager : MonoBehaviour
         int type = Random.Range(0, nbDeviceTypes - 1);
         lastID += 1;
         Order order = new Order(lastID, timeOrder, (DeviceType)type);
-        Debug.Log("Start order " + lastID + " with " + order.deviceType);
+        // Debug.Log("Start order " + lastID + " with " + order.deviceType);
         orders.Add(order);
         UpdateDisplayOrders();
     }
@@ -84,12 +101,12 @@ public class LevelManager : MonoBehaviour
         int index = 0;
         foreach (Order order in orders)
         {
-            if (order.status == OrderStatus.RUNNING && index < maxOrders)
+            if (order.status == OrderStatus.RUNNING && index < MAX_ORDERS)
             {
                 displayOrders[index] = order;
                 index++;
             }
-            if (index == maxOrders)
+            if (index == MAX_ORDERS)
             {
                 break;
             }
@@ -98,15 +115,15 @@ public class LevelManager : MonoBehaviour
         {
             StartOrder();
         }
-        if (index < maxOrders) // If list not completed
+        if (index < MAX_ORDERS) // If list not completed
         {
-            for (int i = index; i < maxOrders; i++)
+            for (int i = index; i < MAX_ORDERS; i++)
             {
                 displayOrders[index] = null;
                 index++;
             }
         }
-        DisplayOrders();
+        // DisplayOrders();
     }
 
     private void DisplayOrders()
@@ -130,7 +147,7 @@ public class LevelManager : MonoBehaviour
                 if (order.remainingTime == 0)
                 {
                     // Order lost
-                    Debug.Log("Lost order " + order.ID);
+                    // Debug.Log("Lost order " + order.ID);
                     order.status = OrderStatus.FAILED;
                     UpdateDisplayOrders();
                 }
