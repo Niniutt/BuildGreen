@@ -182,7 +182,7 @@ public class HostController : NetworkBehaviour
 
     private void Grab()
     {
-        // Test if there is object in zone = 
+        // Test if there is object in zone
         if (grabber.inZone && grabber.objectInZone != null)
         {
             // If yes, put object in child "Grabbed"
@@ -205,7 +205,7 @@ public class HostController : NetworkBehaviour
 
 
         // Depending on where you place the Phone, y is different. For now we put everything at conveyor belt level.
-        snappedPosition.y -= yOffset;
+        snappedPosition.y = yOffset;
 
         grabber.objectInZone.transform.position = snappedPosition;
 
