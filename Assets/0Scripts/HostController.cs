@@ -185,29 +185,38 @@ public class HostController : NetworkBehaviour
         // Test if there is object in zone
         if (grabber.inZone && grabber.objectInZone != null)
         {
+            GameObject go = grabber.objectInZone;
             // If yes, put object in child "Grabbed"
             grabber.hasGrabbed = true;
-            grabber.objectInZone.transform.parent = grabberTransform;
+            go.transform.parent = grabberTransform;
             // Reset transform
-            grabber.objectInZone.transform.localPosition = new Vector3();
-            grabber.objectInZone.transform.localRotation = new Quaternion();
+            go.transform.localPosition = new Vector3();
+            go.transform.localRotation = new Quaternion();
+
+            Grabbable grab = go.GetComponent<Grabbable>();
+            if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
+            grab.UpdateGrabbable();
         }
     }
 
     private void Ungrab()
     {
         grabber.hasGrabbed = false;
-        Vector3 point = grabber.objectInZone.transform.parent.position;
-        grabber.objectInZone.transform.parent = null;
+        GameObject go = grabber.objectInZone;
+        Vector3 point = go.transform.parent.position;
+        go.transform.parent = null;
         // Find closest gridpoint
         Vector3 snappedPosition = grid.LocalToCell(point);
         snappedPosition += gridCenterOffset;
 
+        Grabbable grab = go.GetComponent<Grabbable>();
+        if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
+        grab.UpdateGrabbable();
 
         // Depending on where you place the Phone, y is different. For now we put everything at conveyor belt level.
         snappedPosition.y = yOffset;
 
-        grabber.objectInZone.transform.position = snappedPosition;
+        go.transform.position = snappedPosition;
 
         // Check if ungrab is actually a delivery (two possible positions)
         if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
@@ -218,7 +227,7 @@ public class HostController : NetworkBehaviour
             // Deliver
             levelManager.DeliverOrder(type);
             Debug.Log("deliver");
-            Destroy(grabber.objectInZone, destroyDelay);
+            Destroy(go, destroyDelay);
             grabber.ResetGrabber();
             
         }
