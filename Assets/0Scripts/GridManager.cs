@@ -1,107 +1,63 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+struct ObjectPosition
+{
+    public GameObject go;
+    public Vector2 v2;
+
+    public ObjectPosition(GameObject go, Vector2 v2)
+    {
+        this.go = go;
+        this.v2 = v2;
+    }
+}
+
 public class GridManager : MonoBehaviour
 {
     [SerializeField] private Grid m_Grid;
+    private float minX = -8f;
+    private float maxX = 8f;
+    private float minZ = -9f;
+    private float maxZ = 9f;
+    private List<ObjectPosition> occupiedPositions = new();
+    private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
+    private float yOffset = 0.5f;
 
-    // [SerializeField] private GameObject m_Object;
-    // [SerializeField] private GameObject m_GhostObject;
+    public Vector3 To3(Vector2 v2) => new Vector3(v2.x, yOffset, v2.y); // Kinda
+    public Vector2 To2(Vector3 v3) => new Vector2(v3.x, v3.z);
 
-    // private HashSet<Vector3> occupiedPositions = new HashSet<Vector3>();
-
-    private void Start()
+    public Vector3 GetSnappedPosition(Vector3 point)
     {
-        
+        Vector3 snappedPosition = m_Grid.LocalToCell(point);
+        snappedPosition += gridCenterOffset;
+        snappedPosition.y = yOffset;
+        return snappedPosition;
     }
 
-    private void Update()
+    // Checks if the position of the (ungrabbed) item is in bounds and not already occupied
+    public bool CheckPosition(Vector3 position)
     {
-        
-    }
-
-    /* private void Start()
-    {
-        CreateGhostObject();
-    }
-
-    private void Update()
-    {
-        UpdateGhostPosition();
-
-        if (Input.GetMouseButtonDown(0))
+        // In bounds
+        if(position.x > minX && position.x < maxX && position.z > minZ && position.z < maxZ)
         {
-            PlaceObject();
+            // Not already occupied
+            foreach (ObjectPosition spot in occupiedPositions)
+            {
+                if (spot.v2 == To2(position)) return true;
+            }
         }
+        return false;
+
     }
 
-    void CreateGhostObject ()
+    public void AddPosition(GameObject go, Vector3 position)
     {
-        m_GhostObject = Instantiate(m_Object);
-        m_GhostObject.GetComponent<Collider>().enabled = false;
-
-        Renderer[] renderers = m_GhostObject.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            Material mat = renderer.material;
-            Color color = mat.color;
-            color.a = 0.5f;
-            mat.color = color;
-            renderer.material = mat;
-
-            // mat things
-            mat.SetFloat("_Mode", 2);
-            mat.SetInt("_ScrBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
-            mat.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
-            mat.SetInt("_ZWrite", 0);
-            mat.DisableKeyword("_ALPHATEST_ON");
-            mat.EnableKeyword("_ALPHABLEND_ON");
-            mat.DisableKeyword("_ALPHAPREMULTIPLY");
-            mat.renderQueue = 3000;
-
-        }
+        occupiedPositions.Add(new ObjectPosition(go, To2(position)));
     }
 
-    void UpdateGhostPosition()
+    public void RemovePosition(GameObject go, Vector3 position)
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out RaycastHit hit))
-        {
-            Vector3 point = hit.point;
-            Vector3 snappedPosition = m_Grid.LocalToCell(point);
-            
-            m_GhostObject.transform.position = snappedPosition;
-
-            if (occupiedPositions.Contains(snappedPosition))
-                SetGhostColor(Color.red);
-            else
-                SetGhostColor(new Color(1f, 1f, 1f, 0.5f));
-        }
+        occupiedPositions.Remove(new ObjectPosition(go, To2(position)));
     }
-
-    void SetGhostColor (Color color)
-    {
-        Renderer[] renderers = m_GhostObject.GetComponentsInChildren<Renderer>();
-
-        foreach (Renderer renderer in renderers)
-        {
-            Material mat = renderer.material;
-            mat.color = color;
-            renderer.material = mat;
-        }
-    }
-
-    void PlaceObject()
-    {
-        Vector3 placementPosition = m_GhostObject.transform.position;
-        
-        if (!occupiedPositions.Contains(placementPosition))
-        {
-            Instantiate(m_Object, placementPosition, Quaternion.identity * Quaternion.Euler(Vector3.right * -90));
-
-            occupiedPositions.Add(placementPosition);
-        }
-    }*/
 }

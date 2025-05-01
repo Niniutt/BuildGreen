@@ -1,16 +1,18 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Drawing;
+using System.Collections.Generic;
 
 public class HostController : NetworkBehaviour
 {
-    [SerializeField] private Transform cameraTransform;
+    private Transform cameraTransform;
+    private BoxCollider boxCollider;
+    private Grabbable grab;
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private BoxCollider boxCollider;
     [SerializeField] private GameObject playerMesh;
     [SerializeField] private Grabber grabber;
     [SerializeField] private Transform grabberTransform;
-    [SerializeField] private Grid grid;
+    [SerializeField] private GridManager gridManager;
     [SerializeField] private LevelManager levelManager;
 
     [Space]
@@ -38,9 +40,6 @@ public class HostController : NetworkBehaviour
 
     private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -3f);
     private float thirdPersonRotationX = 75f;
-
-    private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
-    private float yOffset = 0.5f;
 
     private float destroyDelay = 0.5f;
 
@@ -193,7 +192,7 @@ public class HostController : NetworkBehaviour
             go.transform.localPosition = new Vector3();
             go.transform.localRotation = new Quaternion();
 
-            Grabbable grab = go.GetComponent<Grabbable>();
+            grab = go.GetComponent<Grabbable>();
             if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
             grab.UpdateGrabbable();
         }
@@ -201,21 +200,16 @@ public class HostController : NetworkBehaviour
 
     private void Ungrab()
     {
+        // Set data
         grabber.hasGrabbed = false;
         GameObject go = grabber.objectInZone;
         Vector3 point = go.transform.parent.position;
         go.transform.parent = null;
-        // Find closest gridpoint
-        Vector3 snappedPosition = grid.LocalToCell(point);
-        snappedPosition += gridCenterOffset;
 
-        Grabbable grab = go.GetComponent<Grabbable>();
-        if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
         grab.UpdateGrabbable();
 
-        // Depending on where you place the Phone, y is different. For now we put everything at conveyor belt level.
-        snappedPosition.y = yOffset;
-
+        // Find closest gridpoint
+        Vector3 snappedPosition = gridManager.GetSnappedPosition(point);
         go.transform.position = snappedPosition;
 
         // Check if ungrab is actually a delivery (two possible positions)
@@ -229,7 +223,10 @@ public class HostController : NetworkBehaviour
             Debug.Log("deliver");
             Destroy(go, destroyDelay);
             grabber.ResetGrabber();
-            
+        }
+        else // Update occupied positions
+        {
+
         }
     }
 }

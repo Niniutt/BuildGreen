@@ -6,15 +6,8 @@ public class ConveyorBelt : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private Vector3 direction;
     [SerializeField] private List<GameObject> onBelt;
-    
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
+    // Move forward objects on belt
     void Update()
     {
         for (int i = 0; i < onBelt.Count; i++)
@@ -24,6 +17,7 @@ public class ConveyorBelt : MonoBehaviour
     }
 
     // When something collides with the belt
+    // Eventually this script should have the object move along a strict line / square instead of applying a velocity when in collider
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 6)
