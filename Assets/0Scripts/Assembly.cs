@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Assembly : MonoBehaviour
 {
+    private float yOffset = 0f;
+
     // Or crafting!
+
 
     // We need 4 placements for item ingredients
     // For now items types are in the LevelManager script
