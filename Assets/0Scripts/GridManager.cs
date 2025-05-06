@@ -29,6 +29,19 @@ class GridManager : MonoBehaviour
     [SerializeField] private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
     private float yOffset = 0.5f;
 
+    private void Update()
+    {
+        // Update their positions
+        for (int i = 0; i < occupiedPositions.Count; i++)
+        {
+            Vector3 position = occupiedPositions[i].go.transform.position;
+            Vector3 snappedPosition = GetSnappedPosition(position);
+            Vector2 v2 = To2(snappedPosition);
+
+            occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
+        }
+    }
+
     public Vector3 To3(Vector2 v2) => new Vector3(v2.x, yOffset, v2.y); // Kinda
     public Vector2 To2(Vector3 v3) => new Vector2(v3.x, v3.z);
 

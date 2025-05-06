@@ -66,6 +66,7 @@ public class LevelManager : MonoBehaviour
     private int materialIndex0 = 0;
     private int partIndex0 = 3;
     private int deviceIndex0 = 7;
+    private int lastTypeIndex = 10;
 
     [Space]
 
@@ -112,11 +113,21 @@ public class LevelManager : MonoBehaviour
     private void StartLevel()
     {
         // Temporary: Spawn first items
-        SpawnItem((Type)7, Vector3.zero);
+        SpawnItems();
 
         // Repeating functions
         InvokeRepeating(nameof(StartOrder), 0, deltaOrders);
         InvokeRepeating(nameof(CheckOrders), deltaCheck, deltaCheck);
+    }
+
+    private void SpawnItems()
+    {
+        float z = -5.5f;
+        float x = (int)lastTypeIndex / 2; // I want int anyway
+        for (int i = 0; i <= lastTypeIndex; i++)
+        {
+            SpawnItem((Type)i, new Vector3((float)(-x + i), 0f, z));
+        }
     }
 
     private void SpawnItem(Type type, Vector3 point)
@@ -141,7 +152,7 @@ public class LevelManager : MonoBehaviour
                 return;
         }
 
-        Vector3 position = gridManager.GetSnappedPosition(Vector3.zero);
+        Vector3 position = gridManager.GetSnappedPosition(point);
         GameObject go = Instantiate(prefab, position, Quaternion.identity);
         gridManager.Add(go, type, position);
     }
