@@ -91,6 +91,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private GameObject plasticPrefab;
     [SerializeField] private GameObject glassPrefab;
 
+    #region PRIVATE METHODS
+
     void Start()
     {
         // Find canva place and put up a first order
@@ -123,7 +125,7 @@ public class LevelManager : MonoBehaviour
     private void SpawnItems()
     {
         float z = -5.5f;
-        float x = (int)lastTypeIndex / 2; // I want int anyway
+        float x = lastTypeIndex / 2; // I want int anyway
         for (int i = 0; i <= lastTypeIndex; i++)
         {
             SpawnItem((Type)i, new Vector3((float)(-x + i), 0f, z));
@@ -237,6 +239,9 @@ public class LevelManager : MonoBehaviour
         DisplayOrders();
     }
 
+    #endregion
+    #region PUBLIC METHODS
+
     public void DeliverOrder(int type)
     {
         // Correspond type with DeviceType
@@ -256,4 +261,6 @@ public class LevelManager : MonoBehaviour
         // Change display
         UpdateDisplayOrders();
     }
+
+    #endregion
 }

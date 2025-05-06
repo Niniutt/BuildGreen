@@ -6,12 +6,14 @@ using UnityEngine;
 struct ObjectPosition
 {
     public GameObject go;
+    public Grabbable grabbable;
     public Type type;
     public Vector2 v2;
 
     public ObjectPosition(GameObject go, Type type, Vector2 v2)
     {
         this.go = go;
+        this.grabbable = go.GetComponent<Grabbable>();
         this.type = type;
         this.v2 = v2;
     }
@@ -29,18 +31,36 @@ class GridManager : MonoBehaviour
     [SerializeField] private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
     private float yOffset = 0.5f;
 
+    #region PRIVATE METHODS
+
     private void Update()
     {
         // Update their positions
         for (int i = 0; i < occupiedPositions.Count; i++)
         {
-            Vector3 position = occupiedPositions[i].go.transform.position;
-            Vector3 snappedPosition = GetSnappedPosition(position);
-            Vector2 v2 = To2(snappedPosition);
+            if (occupiedPositions[i].grabbable.grabbable)
+            {
+                // Update position
+                Vector3 position = occupiedPositions[i].go.transform.position;
+                Vector3 snappedPosition = GetSnappedPosition(position);
+                Vector2 v2 = To2(snappedPosition);
 
-            occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
+                occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
+            }
+            else
+            {
+                // Get out of the occupied positions check loop (because it's carried by the player now)
+                // = Changing v2
+                Vector2 v2 = new(0f, 10f);
+
+                occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
+
+            }
         }
     }
+
+    #endregion
+    #region PUBLIC METHODS
 
     public Vector3 To3(Vector2 v2) => new Vector3(v2.x, yOffset, v2.y); // Kinda
     public Vector2 To2(Vector3 v3) => new Vector2(v3.x, v3.z);
@@ -54,6 +74,7 @@ class GridManager : MonoBehaviour
     }
 
     // Checks if the position of the (ungrabbed) item is in bounds and not already occupied
+    // Returns true if position is occupied
     public bool CheckPosition(Vector3 position)
     {
         // In bounds
@@ -77,4 +98,6 @@ class GridManager : MonoBehaviour
     {
         occupiedPositions.Remove(new ObjectPosition(go, type, To2(position)));
     }
+
+    #endregion
 }

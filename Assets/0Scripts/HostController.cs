@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Drawing;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class HostController : NetworkBehaviour
 {
@@ -200,29 +201,35 @@ public class HostController : NetworkBehaviour
 
     private void Ungrab()
     {
-        // Set data
-        grabber.hasGrabbed = false;
         GameObject go = grabber.objectInZone;
         Vector3 point = go.transform.parent.position;
-        go.transform.parent = null;
-
-        grab.UpdateGrabbable();
-
-        // Find closest gridpoint
         Vector3 snappedPosition = gridManager.GetSnappedPosition(point);
-        go.transform.position = snappedPosition;
 
-        // Check if ungrab is actually a delivery (two possible positions)
-        if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
+        // Can only put down if there is no object there
+        if (!gridManager.CheckPosition(snappedPosition))
         {
-            // Get object data
-            int type = 0;
+            grabber.hasGrabbed = false;
+            go.transform.parent = null;
 
-            // Deliver
-            levelManager.DeliverOrder(type);
-            Debug.Log("deliver");
-            Destroy(go, destroyDelay);
-            grabber.ResetGrabber();
+            grab.UpdateGrabbable();
+
+            // Find closest gridpoint
+            go.transform.position = snappedPosition;
+
+            // Check if ungrab is actually a delivery (two possible positions)
+            if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
+            {
+                // Get object data
+                int type = 0;
+
+                // Deliver
+                levelManager.DeliverOrder(type);
+                Debug.Log("deliver");
+                Destroy(go, destroyDelay);
+                grabber.ResetGrabber();
+            }
         }
+
+        
     }
 }
