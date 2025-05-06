@@ -224,9 +224,5 @@ public class HostController : NetworkBehaviour
             Destroy(go, destroyDelay);
             grabber.ResetGrabber();
         }
-        else // Update occupied positions
-        {
-
-        }
     }
 }

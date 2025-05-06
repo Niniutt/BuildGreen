@@ -30,7 +30,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2764e3429e9954e4ba949c01d4710460, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5300002
+      value: -3.4499998
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2764e3429e9954e4ba949c01d4710460, type: 3}
       propertyPath: m_LocalRotation.w
@@ -139,6 +139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grabbable: 1
+  gridManager: {fileID: 0}
 --- !u!54 &7752978935467822159
 Rigidbody:
   m_ObjectHideFlags: 0

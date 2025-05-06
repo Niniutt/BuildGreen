@@ -1,27 +1,32 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 struct ObjectPosition
 {
     public GameObject go;
+    public Type type;
     public Vector2 v2;
 
-    public ObjectPosition(GameObject go, Vector2 v2)
+    public ObjectPosition(GameObject go, Type type, Vector2 v2)
     {
         this.go = go;
+        this.type = type;
         this.v2 = v2;
     }
 }
 
-public class GridManager : MonoBehaviour
+
+class GridManager : MonoBehaviour
 {
     [SerializeField] private Grid m_Grid;
     private float minX = -8f;
     private float maxX = 8f;
     private float minZ = -9f;
     private float maxZ = 9f;
-    private List<ObjectPosition> occupiedPositions = new();
-    private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
+    [SerializeField] private List<ObjectPosition> occupiedPositions = new();
+    [SerializeField] private Vector3 gridCenterOffset = new Vector3(0.5f, 0, 0.5f);
     private float yOffset = 0.5f;
 
     public Vector3 To3(Vector2 v2) => new Vector3(v2.x, yOffset, v2.y); // Kinda
@@ -48,16 +53,15 @@ public class GridManager : MonoBehaviour
             }
         }
         return false;
-
     }
 
-    public void AddPosition(GameObject go, Vector3 position)
+    public void Add(GameObject go, Type type, Vector3 position)
     {
-        occupiedPositions.Add(new ObjectPosition(go, To2(position)));
+        occupiedPositions.Add(new ObjectPosition(go, type, To2(position)));
     }
 
-    public void RemovePosition(GameObject go, Vector3 position)
+    public void Remove(GameObject go, Type type, Vector3 position)
     {
-        occupiedPositions.Remove(new ObjectPosition(go, To2(position)));
+        occupiedPositions.Remove(new ObjectPosition(go, type, To2(position)));
     }
 }

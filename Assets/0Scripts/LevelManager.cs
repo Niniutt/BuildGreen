@@ -1,26 +1,21 @@
-using System.Runtime.CompilerServices;
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Collections.Generic;
-using static UnityEngine.Rendering.DebugUI;
-using Unity.VisualScripting.FullSerializer;
-using UnityEngine.UI;
 using TMPro;
 using Random = UnityEngine.Random;
 
-enum DeviceType
-{
-    TV = 0,
-    SERVER = 1,
-    PHONE = 2,
-    PC = 3,
-}
-
-enum MaterialType
+enum Type
 {
     PLASTIC = 0,
     METAL = 1,
     GLASS = 2,
+    DISK = 3,
+    BATTERY = 4,
+    SCREEN = 5,
+    CHIP = 6,
+    TV = 7,
+    SERVER = 8,
+    PHONE = 9,
+    PC = 10,
 }
 
 enum OrderStatus
@@ -55,9 +50,11 @@ public class LevelManager : MonoBehaviour
 {
     private const int MAX_ORDERS = 3;
 
+    [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
     public GameObject UIPrefab;
-    
+    private GameObject[] UIorders = new GameObject[MAX_ORDERS];
+
     private float deltaOrders = 15f; // Time between each order
     private int nbDeviceTypes = 4;
     private int timeOrder = 30; // Max time to deliver an order
@@ -66,16 +63,39 @@ public class LevelManager : MonoBehaviour
     private Order?[] displayOrders = new Order?[MAX_ORDERS];
     private List<Order> orders = new();
 
-    // UI
-    private GameObject[] UIorders = new GameObject[MAX_ORDERS];
+    private int materialIndex0 = 0;
+    private int partIndex0 = 3;
+    private int deviceIndex0 = 7;
+
+    [Space]
+
+    // IT products
+    [SerializeField] private GameObject tvPrefab;
+    [SerializeField] private GameObject serverPrefab;
+    [SerializeField] private GameObject phonePrefab;
+    [SerializeField] private GameObject pcPrefab;
+
+    [Space]
+
+    // IT parts
+    [SerializeField] private GameObject diskPrefab;
+    [SerializeField] private GameObject batteryPrefab;
+    [SerializeField] private GameObject screenPrefab;
+    [SerializeField] private GameObject chipPrefab;
+
+    [Space]
+
+    // Materials
+    [SerializeField] private GameObject metalPrefab;
+    [SerializeField] private GameObject plasticPrefab;
+    [SerializeField] private GameObject glassPrefab;
 
     void Start()
     {
         // Find canva place and put up a first order
         InitUI();
 
-        InvokeRepeating("StartOrder", 0, deltaOrders);
-        InvokeRepeating("CheckOrders", deltaCheck, deltaCheck);
+        StartLevel();
     }
 
     private void InitUI()
@@ -87,6 +107,43 @@ public class LevelManager : MonoBehaviour
             UIorder.SetActive(false); // Deactivate all before they pop again
             UIorders[i] = UIorder;
         }
+    }
+
+    private void StartLevel()
+    {
+        // Temporary: Spawn first items
+        SpawnItem((Type)7, Vector3.zero);
+
+        // Repeating functions
+        InvokeRepeating(nameof(StartOrder), 0, deltaOrders);
+        InvokeRepeating(nameof(CheckOrders), deltaCheck, deltaCheck);
+    }
+
+    private void SpawnItem(Type type, Vector3 point)
+    {
+        GameObject prefab;
+        switch (type)
+        {
+            case Type.METAL: prefab = metalPrefab; break;
+            case Type.PLASTIC: prefab = plasticPrefab; break;
+            case Type.GLASS: prefab = glassPrefab; break;
+            case Type.DISK: prefab = diskPrefab; break;
+            case Type.BATTERY: prefab = batteryPrefab; break;
+            case Type.SCREEN: prefab = screenPrefab; break;
+            case Type.CHIP: prefab = chipPrefab; break;
+            case Type.TV: prefab = tvPrefab; break;
+            case Type.SERVER: prefab = serverPrefab; break;
+            case Type.PHONE: prefab = phonePrefab; break;
+            case Type.PC: prefab = pcPrefab; break;
+            default:
+                prefab = null;
+                Debug.LogError("LevelManager: Type not found");
+                return;
+        }
+
+        Vector3 position = gridManager.GetSnappedPosition(Vector3.zero);
+        GameObject go = Instantiate(prefab, position, Quaternion.identity);
+        gridManager.Add(go, type, position);
     }
 
     private void StartOrder ()
