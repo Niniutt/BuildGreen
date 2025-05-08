@@ -3,46 +3,25 @@ using System.Collections.Generic;
 using TMPro;
 using Random = UnityEngine.Random;
 
-enum Type
-{
-    PLASTIC = 0,
-    METAL = 1,
-    GLASS = 2,
-    DISK = 3,
-    BATTERY = 4,
-    SCREEN = 5,
-    CHIP = 6,
-    TV = 7,
-    SERVER = 8,
-    PHONE = 9,
-    PC = 10,
-}
-
-enum OrderStatus
-{
-    RUNNING = 0,
-    FINISHED = 1,
-    FAILED = 2,
-}
 
 struct Order
 {
     public int ID;
     public int remainingTime;
-    public DeviceType deviceType;
+    public Type type;
     public OrderStatus status;
 
-    public Order(int id, int r, DeviceType d)
+    public Order(int id, int r, Type t)
     {
         ID = id;
         remainingTime = r;
-        deviceType = d;
+        type = t;
         status = OrderStatus.RUNNING;
     }
 
     public void print()
     {
-        Debug.Log("Order " + ID + " with remaining time " + remainingTime + " of device type " + deviceType + " is " + status);
+        Debug.Log("Order " + ID + " with remaining time " + remainingTime + " of device type " + type + " is " + status);
     }
 }
 
@@ -67,6 +46,8 @@ public class LevelManager : MonoBehaviour
     private int partIndex0 = 3;
     private int deviceIndex0 = 7;
     private int lastTypeIndex = 10;
+
+    [SerializeField] private Vector3 craftSpawnPoint = new(0f, 0.5f, 2.5f);
 
     [Space]
 
@@ -134,6 +115,16 @@ public class LevelManager : MonoBehaviour
 
     private void SpawnItem(Type type, Vector3 point)
     {
+        GameObject prefab = GetPrefabFromType(type);
+        Vector3 position = gridManager.GetSnappedPosition(point);
+        GameObject go = Instantiate(prefab, position, Quaternion.identity);
+        Grabbable grab = go.GetComponent<Grabbable>();
+        grab.type = type;
+        gridManager.Add(go, type, position);
+    }
+
+    private GameObject GetPrefabFromType(Type type)
+    {
         GameObject prefab;
         switch (type)
         {
@@ -149,22 +140,17 @@ public class LevelManager : MonoBehaviour
             case Type.PHONE: prefab = phonePrefab; break;
             case Type.PC: prefab = pcPrefab; break;
             default:
-                prefab = null;
                 Debug.LogError("LevelManager: Type not found");
-                return;
+                return null;
         }
-
-        Vector3 position = gridManager.GetSnappedPosition(point);
-        GameObject go = Instantiate(prefab, position, Quaternion.identity);
-        gridManager.Add(go, type, position);
+        return prefab;
     }
 
     private void StartOrder ()
     {
-        int type = Random.Range(0, nbDeviceTypes - 1);
+        int type = Random.Range(deviceIndex0, lastTypeIndex + 1); // Range's max is exclusive
         lastID += 1;
-        Order order = new Order(lastID, timeOrder, (DeviceType)type);
-        // Debug.Log("Start order " + lastID + " with " + order.deviceType);
+        Order order = new Order(lastID, timeOrder, (Type)type);
         orders.Add(order);
         UpdateDisplayOrders();
     }
@@ -207,7 +193,7 @@ public class LevelManager : MonoBehaviour
                 UIorders[i].SetActive(true);
                 TMP_Text text = UIorders[i].GetComponentInChildren<TMP_Text>();
 
-                text.text = "Order " + displayOrders[i].Value.ID + " \n Goal: " + displayOrders[i].Value.deviceType + " \n Time: " + displayOrders[i].Value.remainingTime + " \n Ingredients: ";
+                text.text = "Order " + displayOrders[i].Value.ID + " \n Goal: " + displayOrders[i].Value.type + " \n Time: " + displayOrders[i].Value.remainingTime + " \n Ingredients: ";
             }
             else
             {
@@ -242,14 +228,18 @@ public class LevelManager : MonoBehaviour
     #endregion
     #region PUBLIC METHODS
 
-    public void DeliverOrder(int type)
+    public void SpawnCraftedItem(Type type)
+    {        
+        SpawnItem(type, craftSpawnPoint);
+    }
+
+    public void DeliverOrder(Type type)
     {
-        // Correspond type with DeviceType
-        DeviceType deviceType = (DeviceType)type;
+        // Correspond type with Type
         // Check if there is an order for this device
         for (int i = 0; i < orders.Count; i++)
         {
-            if (orders[i].status == OrderStatus.RUNNING) // orders[i].deviceType == deviceType && 
+            if (orders[i].type == type && orders[i].status == OrderStatus.RUNNING)
             {
                 // Change status of order
                 Order currentOrder = orders[i];

@@ -39,7 +39,7 @@ public class HostController : NetworkBehaviour
     public LayerMask groundLayer;
     public bool firstPerson = false;
 
-    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 9f, -3f);
+    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -1.5f);// (0f, 9f, -3f);
     private float thirdPersonRotationX = 75f;
 
     private float destroyDelay = 0.5f;
@@ -206,7 +206,7 @@ public class HostController : NetworkBehaviour
         Vector3 snappedPosition = gridManager.GetSnappedPosition(point);
 
         // Can only put down if there is no object there
-        if (!gridManager.CheckPosition(snappedPosition))
+        if (!gridManager.CheckPosition(go, snappedPosition))
         {
             grabber.hasGrabbed = false;
             go.transform.parent = null;
@@ -220,9 +220,10 @@ public class HostController : NetworkBehaviour
             if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
             {
                 // Get object data
-                int type = 0;
+                Type type = grab.type;
 
                 // Deliver
+                gridManager.Remove(go, type, snappedPosition);
                 levelManager.DeliverOrder(type);
                 Debug.Log("deliver");
                 Destroy(go, destroyDelay);
