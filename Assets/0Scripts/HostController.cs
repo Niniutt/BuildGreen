@@ -223,7 +223,7 @@ public class HostController : NetworkBehaviour
                 Type type = grab.type;
 
                 // Deliver
-                gridManager.Remove(go, type, snappedPosition);
+                gridManager.Remove(go, type);
                 levelManager.DeliverOrder(type);
                 Debug.Log("deliver");
                 Destroy(go, destroyDelay);

@@ -75,7 +75,7 @@ public class GridManager : MonoBehaviour
             // Not already occupied
             foreach (ObjectPosition spot in occupiedPositions)
             {
-                if (spot.go == carried) break; // Skip if spot is the carried object
+                // if (spot.go == carried) break; // Skip if spot is the carried object
                 if (spot.v2 == To2(position)) return true;
             }
         }
@@ -87,9 +87,9 @@ public class GridManager : MonoBehaviour
         occupiedPositions.Add(new ObjectPosition(go, type, To2(position)));
     }
 
-    public void Remove(GameObject go, Type type, Vector3 position)
+    public void Remove(GameObject go, Type type)
     {
-        occupiedPositions.Remove(new ObjectPosition(go, type, To2(position)));
+        occupiedPositions.RemoveAll(op => op.go == go && op.type == type);
     }
 
     public void Remove(ObjectPosition op)
