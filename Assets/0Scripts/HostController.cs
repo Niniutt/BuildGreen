@@ -13,8 +13,9 @@ public class HostController : NetworkBehaviour
     [SerializeField] private GameObject playerMesh;
     [SerializeField] private Grabber grabber;
     [SerializeField] private Transform grabberTransform;
-    [SerializeField] private GridManager gridManager;
-    [SerializeField] private LevelManager levelManager;
+    [SerializeField] private GameObject cameraGO;
+    private GridManager gridManager;
+    private LevelManager levelManager;
 
     [Space]
 
@@ -94,7 +95,17 @@ public class HostController : NetworkBehaviour
         // Cursor.lockState = CursorLockMode.Locked;
         // Cursor.visible = false;
 
-        // if (!IsOwner)
+        AudioListener cameraAL = cameraGO.GetComponent<AudioListener>();
+        if (IsOwner)
+        {
+            cameraGO.SetActive(true);
+            cameraAL.enabled = true;
+        }
+        else
+        {
+            cameraGO.SetActive(false);
+            cameraAL.enabled = false;
+        }
     }
 
     void Update()
@@ -147,7 +158,7 @@ public class HostController : NetworkBehaviour
     {
         move = transform.TransformDirection(moveInput);
         // If there is input, rotate player in movement direction
-        if (move != new Vector3()) { playerMesh.transform.rotation = Quaternion.LookRotation(move); };
+        if (move != new Vector3() && IsOwner) { playerMesh.transform.rotation = Quaternion.LookRotation(move); };
         move = move * speed;
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }

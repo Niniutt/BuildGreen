@@ -500,7 +500,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1397108774
+  GlobalObjectIdHash: 2845121663
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -530,8 +530,7 @@ MonoBehaviour:
   playerMesh: {fileID: 5939479288160603427}
   grabber: {fileID: 7697644012910550137}
   grabberTransform: {fileID: 2967585706356682921}
-  gridManager: {fileID: 0}
-  levelManager: {fileID: 0}
+  cameraGO: {fileID: 2027715869790916903}
   speed: 5
   sensitivity: 3.5
   jumpForce: 10
