@@ -8,7 +8,7 @@ public class Grabbable : MonoBehaviour
 
     private void Update()
     {
-        if (!grabbable) // picked up
+        if (!grabbable && follow.transform) // picked up
         {
             // Follow the object to follow => Player's grabber
             transform.position = follow.transform.position;
