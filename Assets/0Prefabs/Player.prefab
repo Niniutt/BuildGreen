@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 1302736042084284403}
   - component: {fileID: 6408705393883624960}
   m_Layer: 0
-  m_Name: Point Light (1)
+  m_Name: PointLightTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -250,7 +250,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.84618104, b: 0.62578607, a: 1}
-  m_Intensity: 2
+  m_Intensity: 3
   m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -339,7 +339,7 @@ GameObject:
   - component: {fileID: 5332601330797238147}
   - component: {fileID: 311744781074890350}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: PointLightBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -371,7 +371,7 @@ Light:
   serializedVersion: 11
   m_Type: 2
   m_Color: {r: 1, g: 0.84618104, b: 0.62578607, a: 1}
-  m_Intensity: 2
+  m_Intensity: 3
   m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208

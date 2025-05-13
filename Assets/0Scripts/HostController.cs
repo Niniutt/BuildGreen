@@ -73,17 +73,13 @@ public class HostController : NetworkBehaviour
 
     private void Init()
     {
-        // Get rigidbody
+        // Get components
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-
         boxCollider = GetComponentInChildren<BoxCollider>();
-
-        // Get player camera
-        if (!cameraTransform)
-        {
-            cameraTransform = GetComponentInChildren<Camera>().transform;
-        }
+        gridManager = FindFirstObjectByType<GridManager>();
+        levelManager = FindFirstObjectByType<LevelManager>();
+        if (!cameraTransform) cameraTransform = GetComponentInChildren<Camera>().transform;
 
         UpdateCameraPerson();
 
@@ -191,21 +187,23 @@ public class HostController : NetworkBehaviour
         }
     }
 
+    // Has to be changed after https://discussions.unity.com/t/player-hierarchical-networkobjects/864173/25
+    // Because now items are NetworkObjects, we have to fake the transform parenting
     private void Grab()
     {
         // Test if there is object in zone
         if (grabber.inZone && grabber.objectInZone != null)
         {
             GameObject go = grabber.objectInZone;
+            grab = go.GetComponent<Grabbable>();
+            if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
             // If yes, put object in child "Grabbed"
             grabber.hasGrabbed = true;
-            go.transform.parent = grabberTransform;
+            grab.follow = grabberTransform;
             // Reset transform
             go.transform.localPosition = new Vector3();
             go.transform.localRotation = new Quaternion();
 
-            grab = go.GetComponent<Grabbable>();
-            if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
             grab.UpdateGrabbable();
         }
     }
@@ -213,14 +211,14 @@ public class HostController : NetworkBehaviour
     private void Ungrab()
     {
         GameObject go = grabber.objectInZone;
-        Vector3 point = go.transform.parent.position;
+        Vector3 point = grabber.transform.position;
         Vector3 snappedPosition = gridManager.GetSnappedPosition(point);
 
         // Can only put down if there is no object there
         if (!gridManager.CheckPosition(go, snappedPosition))
         {
             grabber.hasGrabbed = false;
-            go.transform.parent = null;
+            // go.transform.parent = null;
 
             grab.UpdateGrabbable();
 
