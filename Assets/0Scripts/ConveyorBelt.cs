@@ -37,7 +37,7 @@ public class ConveyorBelt : MonoBehaviour
         {
             Grabbable grab = other.gameObject.GetComponent<Grabbable>();
             if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
-            if (grab.grabbable)
+            if (!grab.isGrabbed.Value)
             {
                 onBelt.Add(other.gameObject);
             }

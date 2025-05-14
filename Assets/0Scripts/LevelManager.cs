@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
 using Random = UnityEngine.Random;
+using Unity.Netcode;
 
 
 struct Order
@@ -25,7 +26,7 @@ struct Order
     }
 }
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : NetworkBehaviour
 {
     private const int MAX_ORDERS = 3;
 
@@ -74,12 +75,12 @@ public class LevelManager : MonoBehaviour
 
     #region PRIVATE METHODS
 
-    void Start()
+    public override void OnNetworkSpawn()
     {
-        // Find canva place and put up a first order
-        InitUI();
-
-        StartLevel();
+        if (IsServer)
+        {
+            StartLevel();
+        }
     }
 
     private void InitUI()
@@ -93,8 +94,11 @@ public class LevelManager : MonoBehaviour
         }
     }
 
-    private void StartLevel()
+    public void StartLevel()
     {
+        // Find canva place and put up a first order
+        InitUI();
+
         // Temporary: Spawn first items
         SpawnItems();
 
@@ -117,7 +121,19 @@ public class LevelManager : MonoBehaviour
     {
         GameObject prefab = GetPrefabFromType(type);
         Vector3 position = gridManager.GetSnappedPosition(point);
+
         GameObject go = Instantiate(prefab, position, Quaternion.identity);
+        NetworkObject no = go.GetComponent<NetworkObject>();
+
+        if (no != null)
+        {
+            no.Spawn();
+        }
+        else
+        {
+            Debug.LogError($"Spawned prefab is missing NetworkObject: {prefab.name}");
+            return;
+        }
         Grabbable grab = go.GetComponent<Grabbable>();
         grab.type = type;
         gridManager.Add(go, type, position);
@@ -125,25 +141,22 @@ public class LevelManager : MonoBehaviour
 
     private GameObject GetPrefabFromType(Type type)
     {
-        GameObject prefab;
-        switch (type)
+        // Formatting from ChatGPT is better <3
+        return type switch
         {
-            case Type.METAL: prefab = metalPrefab; break;
-            case Type.PLASTIC: prefab = plasticPrefab; break;
-            case Type.GLASS: prefab = glassPrefab; break;
-            case Type.DISK: prefab = diskPrefab; break;
-            case Type.BATTERY: prefab = batteryPrefab; break;
-            case Type.SCREEN: prefab = screenPrefab; break;
-            case Type.CHIP: prefab = chipPrefab; break;
-            case Type.TV: prefab = tvPrefab; break;
-            case Type.SERVER: prefab = serverPrefab; break;
-            case Type.PHONE: prefab = phonePrefab; break;
-            case Type.PC: prefab = pcPrefab; break;
-            default:
-                Debug.LogError("LevelManager: Type not found");
-                return null;
-        }
-        return prefab;
+            Type.METAL => metalPrefab,
+            Type.PLASTIC => plasticPrefab,
+            Type.GLASS => glassPrefab,
+            Type.DISK => diskPrefab,
+            Type.BATTERY => batteryPrefab,
+            Type.SCREEN => screenPrefab,
+            Type.CHIP => chipPrefab,
+            Type.TV => tvPrefab,
+            Type.SERVER => serverPrefab,
+            Type.PHONE => phonePrefab,
+            Type.PC => pcPrefab,
+            _ => null,
+        };
     }
 
     private void StartOrder ()

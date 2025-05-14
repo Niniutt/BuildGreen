@@ -1,26 +1,59 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class Grabbable : MonoBehaviour
+public class Grabbable : NetworkBehaviour
 {
-    public bool grabbable = true; // Means it's not picked up
     public Transform follow;
     public Type type;
 
+    public NetworkVariable<bool> isGrabbed = new(false);
+
     private void Update()
     {
-        if (!grabbable && follow.transform) // picked up
+        if (isGrabbed.Value && follow != null) // picked up
         {
             // Follow the object to follow => Player's grabber
-            transform.position = follow.transform.position;
-            transform.rotation = follow.transform.rotation;
+            transform.position = follow.position;
+            transform.rotation = follow.rotation;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void GrabServerRpc(ulong playerNetworkObjectId)
+    {
+        isGrabbed.Value = true;
+        SetFollowClientRpc(playerNetworkObjectId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void UngrabServerRpc()
+    {
+        isGrabbed.Value = false;
+        ClearFollowClientRpc();
+    }
+
+    [ClientRpc]
+    private void SetFollowClientRpc(ulong playerNetworkObjectId)
+    {
+        Debug.Log("ClientRpc SetFollowClientRpc");
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkObjectId, out var playerObj))
+        {
+            var hostController = playerObj.GetComponent<HostController>();
+            if (hostController != null)
+            {
+                follow = hostController.grabberTransform;
+            }
+        }
+    }
+
+    [ClientRpc]
+    private void ClearFollowClientRpc()
+    {
+        follow = null;
     }
 
     public void UpdateGrabbable()
     {
-        if (grabbable) {
-            grabbable = false;
-        }
-        else grabbable = true;
+        isGrabbed.Value = !isGrabbed.Value;
     }
 }

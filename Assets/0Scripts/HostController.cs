@@ -1,8 +1,5 @@
 using UnityEngine;
 using Unity.Netcode;
-using System.Drawing;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 
 public class HostController : NetworkBehaviour
 {
@@ -12,7 +9,7 @@ public class HostController : NetworkBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private GameObject playerMesh;
     [SerializeField] private Grabber grabber;
-    [SerializeField] private Transform grabberTransform;
+    public Transform grabberTransform;
     [SerializeField] private GameObject cameraGO;
     private GridManager gridManager;
     private LevelManager levelManager;
@@ -196,15 +193,18 @@ public class HostController : NetworkBehaviour
         {
             GameObject go = grabber.objectInZone;
             grab = go.GetComponent<Grabbable>();
-            if (grab == null) Debug.LogError("Not valid grabbable object (missing 'Grabbable' script)");
-            // If yes, put object in child "Grabbed"
+            Debug.Log("Grab " + grab.type);
             grabber.hasGrabbed = true;
             grab.follow = grabberTransform;
             // Reset transform
             go.transform.localPosition = new Vector3();
             go.transform.localRotation = new Quaternion();
 
-            grab.UpdateGrabbable();
+            var no = GetComponent<NetworkObject>();
+            if (no != null && grab != null)
+            {
+                grab.GrabServerRpc(no.NetworkObjectId);
+            }
         }
     }
 
@@ -218,9 +218,11 @@ public class HostController : NetworkBehaviour
         if (!gridManager.CheckPosition(go, snappedPosition))
         {
             grabber.hasGrabbed = false;
-            // go.transform.parent = null;
 
-            grab.UpdateGrabbable();
+            if (grab != null)
+            {
+                grab.UngrabServerRpc();
+            }
 
             // Find closest gridpoint
             go.transform.position = snappedPosition;

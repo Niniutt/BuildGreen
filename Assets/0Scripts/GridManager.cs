@@ -39,7 +39,7 @@ public class GridManager : MonoBehaviour
         // Update their positions
         for (int i = 0; i < occupiedPositions.Count; i++)
         {
-            if (occupiedPositions[i].grabbable.grabbable)
+            if (!occupiedPositions[i].grabbable.isGrabbed.Value && occupiedPositions[i].go)
             {
                 // Update position
                 Vector3 position = occupiedPositions[i].go.transform.position;
