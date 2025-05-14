@@ -6,33 +6,33 @@ public class HostController : NetworkBehaviour
     private Transform cameraTransform;
     private BoxCollider boxCollider;
     private Grabbable grab;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private GameObject playerMesh;
-    [SerializeField] private Grabber grabber;
-    public Transform grabberTransform;
-    [SerializeField] private GameObject cameraGO;
     private GridManager gridManager;
     private LevelManager levelManager;
+    [SerializeField] private Rigidbody rb;
+    [SerializeField] private GameObject playerMesh;
+    [SerializeField] private GameObject cameraGO;
+    [SerializeField] private Grabber grabber;
+    public Transform grabberTransform;
+    public NetworkVariable<Quaternion> playerMeshRotation = new NetworkVariable<Quaternion>(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     [Space]
 
-    [SerializeField] private float speed = 20.0f;
-    [SerializeField] private float sensitivity = 1.0f;
-    [SerializeField] private float jumpForce = 1.0f;
+    private readonly float speed = 7.0f;
+    private readonly float sensitivity = 1.0f;
+    private readonly float jumpForce = 1.0f;
 
     private Vector3 moveInput;
     private Vector2 mouseInput;
-
     private Vector3 move = new();
     private Vector2 rotate = new();
 
-    public float fallMultiplier = 2.5f; // Multiplies gravity when falling down
-    public float ascendMultiplier = 2f; // Multiplies gravity for ascending to peak of jump
-    private bool isGrounded = true;
+    private readonly float fallMultiplier = 2.5f;
+    private readonly float ascendMultiplier = 2f;
+    private readonly float groundCheckDelay = 0.3f;
     private float groundCheckTimer = 0f;
-    private float groundCheckDelay = 0.3f;
     private float playerHeight;
     private float raycastDistance;
+    private bool isGrounded = true;
 
     public LayerMask groundLayer;
     public bool firstPerson = false;
@@ -54,7 +54,6 @@ public class HostController : NetworkBehaviour
 
     public void UpdateCameraPerson()
     {
-        // Debug.Log(cameraTransform);
         if (firstPerson)
         {
             // Reset camera transform
@@ -139,6 +138,11 @@ public class HostController : NetworkBehaviour
                 Grab();
             }
         }
+
+        if (!IsOwner)
+        {
+            playerMesh.transform.rotation = playerMeshRotation.Value;
+        }
     }
 
     private void FixedUpdate()
@@ -151,7 +155,13 @@ public class HostController : NetworkBehaviour
     {
         move = transform.TransformDirection(moveInput);
         // If there is input, rotate player in movement direction
-        if (move != new Vector3() && IsOwner) { playerMesh.transform.rotation = Quaternion.LookRotation(move); };
+        if (move != new Vector3() && IsOwner) 
+        {
+            Quaternion newRotation = Quaternion.LookRotation(move);
+            playerMesh.transform.rotation = newRotation;
+            playerMeshRotation.Value = newRotation;
+        }
+        ;
         move = move * speed;
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }
@@ -193,7 +203,7 @@ public class HostController : NetworkBehaviour
         {
             GameObject go = grabber.objectInZone;
             grab = go.GetComponent<Grabbable>();
-            Debug.Log("Grab " + grab.type);
+            Debug.Log("Grab " + grab.type.Value);
             grabber.hasGrabbed = true;
             grab.follow = grabberTransform;
             // Reset transform
@@ -231,7 +241,7 @@ public class HostController : NetworkBehaviour
             if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
             {
                 // Get object data
-                Type type = grab.type;
+                Type type = grab.type.Value;
 
                 // Deliver
                 gridManager.Remove(go, type);

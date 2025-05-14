@@ -135,7 +135,7 @@ public class LevelManager : NetworkBehaviour
             return;
         }
         Grabbable grab = go.GetComponent<Grabbable>();
-        grab.type = type;
+        grab.type.Value = type; // This is probably set only on server side, not on client side it seems.
         gridManager.Add(go, type, position);
     }
 

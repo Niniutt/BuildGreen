@@ -4,15 +4,13 @@ using UnityEngine;
 public class Grabbable : NetworkBehaviour
 {
     public Transform follow;
-    public Type type;
-
+    public NetworkVariable<Type> type;
     public NetworkVariable<bool> isGrabbed = new(false);
 
     private void Update()
     {
-        if (isGrabbed.Value && follow != null) // picked up
+        if (isGrabbed.Value && follow != null)
         {
-            // Follow the object to follow => Player's grabber
             transform.position = follow.position;
             transform.rotation = follow.rotation;
         }
@@ -35,7 +33,6 @@ public class Grabbable : NetworkBehaviour
     [ClientRpc]
     private void SetFollowClientRpc(ulong playerNetworkObjectId)
     {
-        Debug.Log("ClientRpc SetFollowClientRpc");
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkObjectId, out var playerObj))
         {
             var hostController = playerObj.GetComponent<HostController>();
