@@ -204,7 +204,7 @@ public class HostController : NetworkBehaviour
         {
             grabber.hasGrabbed = false;
 
-            grab.UngrabServerRpc();
+            grab.UngrabServerRpc(snappedPosition);
             grab.RequestChangeOwnershipServerRpc(NetworkManager.ServerClientId);
 
             // Find closest gridpoint

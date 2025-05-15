@@ -9,12 +9,21 @@ public class Grabbable : NetworkBehaviour
     public NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     public NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+    public NetworkVariable<Vector3> snappedPosition = new(Vector3.zero);
+
     private void Update()
     {
         if (isGrabbed.Value)
         {
             transform.position = grabberPosition.Value;
             transform.rotation = grabberRotation.Value;
+        }
+        else if (snappedPosition.Value != Vector3.zero)
+        {
+            // Not the best but OnValueChange doesn't seem to work
+            Debug.Log("Dropped: " + snappedPosition.Value);
+            transform.position = snappedPosition.Value;
+            snappedPosition.Value = Vector3.zero;
         }
     }
 
@@ -25,9 +34,10 @@ public class Grabbable : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void UngrabServerRpc()
+    public void UngrabServerRpc(Vector3 snappedPosition)
     {
         isGrabbed.Value = false;
+        this.snappedPosition.Value = snappedPosition;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -41,10 +51,5 @@ public class Grabbable : NetworkBehaviour
         if (!IsOwner) return;
         grabberPosition.Value = position;
         grabberRotation.Value = rotation;
-    }
-
-    public void UpdateGrabbable()
-    {
-        isGrabbed.Value = !isGrabbed.Value;
     }
 }
