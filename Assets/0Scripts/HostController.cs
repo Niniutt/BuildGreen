@@ -3,28 +3,28 @@ using Unity.Netcode;
 
 public class HostController : NetworkBehaviour
 {
-    private Transform cameraTransform;
     private BoxCollider boxCollider;
     private Grabbable grab;
     private GridManager gridManager;
     private LevelManager levelManager;
-    [SerializeField] private Rigidbody rb;
-    [SerializeField] private GameObject playerMesh;
-    [SerializeField] private GameObject cameraGO;
-    [SerializeField] private Grabber grabber;
-    public Transform grabberTransform;
-    public NetworkVariable<Quaternion> playerMeshRotation = new NetworkVariable<Quaternion>(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private Rigidbody rb;
+    [SerializeField] GameObject cameraPrefab;
+    private GameObject thirdPersonCamera;
+    private Grabber grabber;
+    public Vector3 grabberPosition = new();
+    public Quaternion grabberRotation = new();
 
     [Space]
 
     private readonly float speed = 7.0f;
-    private readonly float sensitivity = 1.0f;
-    private readonly float jumpForce = 1.0f;
+    private readonly float rotationSpeed = 0.1f;
+    // private readonly float sensitivity = 1.0f;
+    private readonly float jumpForce = 8.0f;
 
     private Vector3 moveInput;
-    private Vector2 mouseInput;
+    // private Vector2 mouseInput;
     private Vector3 move = new();
-    private Vector2 rotate = new();
+    // private Vector2 rotate = new();
 
     private readonly float fallMultiplier = 2.5f;
     private readonly float ascendMultiplier = 2f;
@@ -38,33 +38,13 @@ public class HostController : NetworkBehaviour
     public bool firstPerson = false;
 
     private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -1.5f);// (0f, 9f, -3f);
-    private float thirdPersonRotationX = 75f;
+    // private float thirdPersonRotationX = 75f;
 
     private float destroyDelay = 0.5f;
-
-    void Start()
-    {
-        Init();
-    }
 
     public override void OnNetworkSpawn()
     {
         Init();
-    }
-
-    public void UpdateCameraPerson()
-    {
-        if (firstPerson)
-        {
-            // Reset camera transform
-            cameraTransform.localPosition = new Vector3();
-            cameraTransform.localRotation = new Quaternion();
-        }
-        else
-        {
-            cameraTransform.localPosition = thirdPersonCameraPosition;
-            cameraTransform.localRotation = Quaternion.Euler(thirdPersonRotationX, 0f, 0f);
-        }
     }
 
     private void Init()
@@ -72,12 +52,11 @@ public class HostController : NetworkBehaviour
         // Get components
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        boxCollider = GetComponentInChildren<BoxCollider>();
+        boxCollider = GetComponent<BoxCollider>();
         gridManager = FindFirstObjectByType<GridManager>();
         levelManager = FindFirstObjectByType<LevelManager>();
-        if (!cameraTransform) cameraTransform = GetComponentInChildren<Camera>().transform;
-
-        UpdateCameraPerson();
+        thirdPersonCamera = Instantiate(cameraPrefab);
+        grabber = GetComponentInChildren<Grabber>();
 
         // Jump raycast init
         playerHeight = boxCollider.size.y * transform.localScale.y;
@@ -87,29 +66,24 @@ public class HostController : NetworkBehaviour
         // Cursor.lockState = CursorLockMode.Locked;
         // Cursor.visible = false;
 
-        AudioListener cameraAL = cameraGO.GetComponent<AudioListener>();
+        AudioListener cameraAL = thirdPersonCamera.GetComponent<AudioListener>();
         if (IsOwner)
         {
-            cameraGO.SetActive(true);
+            thirdPersonCamera.SetActive(true);
             cameraAL.enabled = true;
         }
         else
         {
-            cameraGO.SetActive(false);
+            thirdPersonCamera.SetActive(false);
             cameraAL.enabled = false;
         }
+
+        MovePlayerCamera();
     }
 
     void Update()
     {
         moveInput = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
-        
-        if (firstPerson)
-        {
-            mouseInput = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-
-            MovePlayerCamera();
-        }
 
         // Jump
         if (Input.GetButtonDown("Jump") && isGrounded)
@@ -127,21 +101,16 @@ public class HostController : NetworkBehaviour
         }
 
         // Grab
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.E) && IsOwner)
         {
-            if (grabber.hasGrabbed)
-            {
-                Ungrab();
-            }
-            else
-            {
-                Grab();
-            }
+            if (grabber.hasGrabbed) Ungrab();
+            else Grab();
         }
 
-        if (!IsOwner)
+        if (IsOwner && grabber.hasGrabbed)
         {
-            playerMesh.transform.rotation = playerMeshRotation.Value;
+            grabberPosition = grabber.transform.position;
+            grabberRotation = transform.rotation;
         }
     }
 
@@ -149,17 +118,23 @@ public class HostController : NetworkBehaviour
     {
         MovePlayer();
         JumpPhysics();
+
+        if (grab != null && grab.isGrabbed.Value)
+        {
+            grab.UpdateGrabberPose(grabberPosition, grabberRotation);
+        }
     }
 
     private void MovePlayer()
     {
-        move = transform.TransformDirection(moveInput);
+        move = moveInput; // transform.TransformDirection(moveInput);
         // If there is input, rotate player in movement direction
         if (move != new Vector3() && IsOwner) 
         {
-            Quaternion newRotation = Quaternion.LookRotation(move);
-            playerMesh.transform.rotation = newRotation;
-            playerMeshRotation.Value = newRotation;
+            Quaternion newRotation = Quaternion.LookRotation(move * rotationSpeed);
+            transform.rotation = newRotation;
+
+            MovePlayerCamera();
         }
         ;
         move = move * speed;
@@ -168,11 +143,14 @@ public class HostController : NetworkBehaviour
 
     private void MovePlayerCamera()
     {
+        thirdPersonCamera.transform.position = transform.position + thirdPersonCameraPosition;
+        /*
         rotate.x = mouseInput.x * sensitivity;
         rotate.y -= Mathf.Clamp(mouseInput.y * sensitivity, -90f, 90f);
         transform.Rotate(0, rotate.x, 0);
 
         cameraTransform.localRotation = Quaternion.Euler(rotate.y, 0, 0);
+        */
     }
 
     private void Jump()
@@ -203,12 +181,9 @@ public class HostController : NetworkBehaviour
         {
             GameObject go = grabber.objectInZone;
             grab = go.GetComponent<Grabbable>();
-            Debug.Log("Grab " + grab.type.Value);
+            grab.RequestChangeOwnershipServerRpc(OwnerClientId);
+            
             grabber.hasGrabbed = true;
-            grab.follow = grabberTransform;
-            // Reset transform
-            go.transform.localPosition = new Vector3();
-            go.transform.localRotation = new Quaternion();
 
             var no = GetComponent<NetworkObject>();
             if (no != null && grab != null)
@@ -225,17 +200,16 @@ public class HostController : NetworkBehaviour
         Vector3 snappedPosition = gridManager.GetSnappedPosition(point);
 
         // Can only put down if there is no object there
-        if (!gridManager.CheckPosition(go, snappedPosition))
+        if (!gridManager.CheckPosition(go, snappedPosition) && grab)
         {
             grabber.hasGrabbed = false;
 
-            if (grab != null)
-            {
-                grab.UngrabServerRpc();
-            }
+            grab.UngrabServerRpc();
+            grab.RequestChangeOwnershipServerRpc(NetworkManager.ServerClientId);
 
             // Find closest gridpoint
             go.transform.position = snappedPosition;
+            grabberPosition = snappedPosition;
 
             // Check if ungrab is actually a delivery (two possible positions)
             if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
@@ -251,7 +225,5 @@ public class HostController : NetworkBehaviour
                 grabber.ResetGrabber();
             }
         }
-
-        
     }
 }

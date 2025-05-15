@@ -3,16 +3,18 @@ using UnityEngine;
 
 public class Grabbable : NetworkBehaviour
 {
-    public Transform follow;
     public NetworkVariable<Type> type;
     public NetworkVariable<bool> isGrabbed = new(false);
 
+    public NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    public NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
     private void Update()
     {
-        if (isGrabbed.Value && follow != null)
+        if (isGrabbed.Value)
         {
-            transform.position = follow.position;
-            transform.rotation = follow.rotation;
+            transform.position = grabberPosition.Value;
+            transform.rotation = grabberRotation.Value;
         }
     }
 
@@ -20,33 +22,25 @@ public class Grabbable : NetworkBehaviour
     public void GrabServerRpc(ulong playerNetworkObjectId)
     {
         isGrabbed.Value = true;
-        SetFollowClientRpc(playerNetworkObjectId);
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void UngrabServerRpc()
     {
         isGrabbed.Value = false;
-        ClearFollowClientRpc();
     }
 
-    [ClientRpc]
-    private void SetFollowClientRpc(ulong playerNetworkObjectId)
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestChangeOwnershipServerRpc(ulong newOwnerClientId)
     {
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkObjectId, out var playerObj))
-        {
-            var hostController = playerObj.GetComponent<HostController>();
-            if (hostController != null)
-            {
-                follow = hostController.grabberTransform;
-            }
-        }
+        GetComponent<NetworkObject>().ChangeOwnership(newOwnerClientId);
     }
 
-    [ClientRpc]
-    private void ClearFollowClientRpc()
+    public void UpdateGrabberPose(Vector3 position, Quaternion rotation)
     {
-        follow = null;
+        if (!IsOwner) return;
+        grabberPosition.Value = position;
+        grabberRotation.Value = rotation;
     }
 
     public void UpdateGrabbable()
