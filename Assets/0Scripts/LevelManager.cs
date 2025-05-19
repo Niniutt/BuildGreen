@@ -174,7 +174,6 @@ public class LevelManager : NetworkBehaviour
                 SpawnPart(Type.SCREEN); // 3
                 break;
         }
-        Debug.Log("Spawn " + type.ToString());
         // Eventually would be nice to just count every object of every type on the scene and produce depending on that.
     }
 
@@ -197,7 +196,6 @@ public class LevelManager : NetworkBehaviour
                 break;
             default:
                 point = craftSpawnPoint;
-                Debug.Log("Craft");
                 break;
         }
         GameObject prefab = GetPrefabFromType(type);

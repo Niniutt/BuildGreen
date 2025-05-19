@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [Serializable]
@@ -23,6 +24,8 @@ public class GridManager : MonoBehaviour
 {
     [SerializeField] private Grid m_Grid;
     [SerializeField] private LevelManager levelManager;
+    [SerializeField] private Vector2 binPosition;
+    [SerializeField] private Vector2 binPosition2;
     private float minX = -8f;
     private float maxX = 8f;
     private float minZ = -9f;
@@ -47,6 +50,12 @@ public class GridManager : MonoBehaviour
                 Vector2 v2 = To2(snappedPosition);
 
                 // Remove if in the bin
+                if(v2 == binPosition || v2 == binPosition2)
+                {
+                    Destroy(occupiedPositions[i].go);
+                    occupiedPositions.RemoveAt(i);
+                    continue;
+                }
 
                 occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
             }

@@ -220,7 +220,6 @@ public class HostController : NetworkBehaviour
                 // Deliver
                 gridManager.Remove(go, type);
                 levelManager.DeliverOrder(type);
-                Debug.Log("deliver");
                 Destroy(go, destroyDelay);
                 grabber.ResetGrabber();
             }

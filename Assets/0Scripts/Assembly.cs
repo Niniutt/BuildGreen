@@ -8,8 +8,6 @@ public class Assembly : MonoBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private RecipesSO recipesSO;
     
-    private float yOffset = 0f;
-    private float craftingTime = 1f;
     private bool inZone = false;
 
     private void Update()
@@ -35,7 +33,6 @@ public class Assembly : MonoBehaviour
             if (ListsEqualIgnoreOrder(recipe.inputs, list))
             {
                 // Valid recipe
-                Debug.Log("Ouiiiiii " + recipe.output.ToString());
                 noFound = false;
                 output = recipe.output;
                 break;
