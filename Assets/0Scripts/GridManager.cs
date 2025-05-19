@@ -46,6 +46,8 @@ public class GridManager : MonoBehaviour
                 Vector3 snappedPosition = GetSnappedPosition(position);
                 Vector2 v2 = To2(snappedPosition);
 
+                // Remove if in the bin
+
                 occupiedPositions[i] = new ObjectPosition(occupiedPositions[i].go, occupiedPositions[i].type, v2);
             }
         }
