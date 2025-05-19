@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using Random = UnityEngine.Random;
 using Unity.Netcode;
-
+using Unity.VisualScripting;
 
 struct Order
 {
@@ -32,23 +32,25 @@ public class LevelManager : NetworkBehaviour
 
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
+    [SerializeField] private RecipesSO recipesSO;
     public GameObject UIPrefab;
     private GameObject[] UIorders = new GameObject[MAX_ORDERS];
 
-    private float deltaOrders = 15f; // Time between each order
-    private int nbDeviceTypes = 4;
-    private int timeOrder = 30; // Max time to deliver an order
+    private readonly float deltaOrders = 15f; // Time between each order
+    private int timeOrder = 60; // Max time to deliver an order
     private int lastID = 0;
-    private float deltaCheck = 1f;
+    private readonly float deltaCheck = 1f;
     private Order?[] displayOrders = new Order?[MAX_ORDERS];
     private List<Order> orders = new();
+    private readonly float deltaMaterial = 0.66f;
+    private readonly float deltaPart = 3f;
 
-    private int materialIndex0 = 0;
-    private int partIndex0 = 3;
+    // private int materialIndex0 = 0;
+    // private int partIndex0 = 3;
     private int deviceIndex0 = 7;
     private int lastTypeIndex = 10;
 
-    [SerializeField] private Vector3 craftSpawnPoint = new(0f, 0.5f, 2.5f);
+    [SerializeField] private Vector3 craftSpawnPoint = new(-2f, 0.5f, 2.5f);
 
     [Space]
 
@@ -72,6 +74,8 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] private GameObject metalPrefab;
     [SerializeField] private GameObject plasticPrefab;
     [SerializeField] private GameObject glassPrefab;
+
+    private List<Type> toSpawn = new();
 
     #region PRIVATE METHODS
 
@@ -100,40 +104,108 @@ public class LevelManager : NetworkBehaviour
         InitUI();
 
         // Temporary: Spawn first items
-        SpawnItems();
+        InvokeRepeating(nameof(SpawnMaterials), 0, deltaMaterial);
+        InvokeRepeating(nameof(SpawnParts), 0, deltaPart);
 
         // Repeating functions
         InvokeRepeating(nameof(StartOrder), 0, deltaOrders);
         InvokeRepeating(nameof(CheckOrders), deltaCheck, deltaCheck);
     }
 
-    private void SpawnItems()
+    // Repeating spawning of metal, plastic (x2), glass for just one second (scene animation)
+    private void SpawnMaterials()
     {
-        float z = -5.5f;
-        float x = lastTypeIndex / 2; // I want int anyway
-        for (int i = 0; i <= lastTypeIndex; i++)
+        int type = Random.Range(0, 4); // Choosing material type
+        switch(type)
         {
-            SpawnItem((Type)i, new Vector3((float)(-x + i), 0f, z));
+            case 0:
+                SpawnMaterial(Type.METAL, new Vector3(-3.5f, 0.5f, -10f));
+                break;
+            case 1:
+                SpawnMaterial(Type.PLASTIC, new Vector3(-2.5f, 0.5f, -10f));
+                break;
+            case 2:
+                SpawnMaterial(Type.PLASTIC, new Vector3(2.5f, 0.5f, -10f));
+                break;
+            case 3:
+                SpawnMaterial(Type.GLASS, new Vector3(3.5f, 0.5f, -10f));
+                break;
         }
     }
 
-    private void SpawnItem(Type type, Vector3 point)
+    private void SpawnMaterial(Type type, Vector3 point)
     {
+        GameObject prefab = GetPrefabFromType(type);
+        GameObject go = Instantiate(prefab, point, Quaternion.identity);
+        NetworkObject no = go.GetComponent<NetworkObject>();
+        if (no != null) no.Spawn();
+    }
+
+    private void SpawnParts()
+    {
+        // Either spawn a part according to an order recipe (1), either randomly (2).
+        Type type = Type.NULL;
+        int index = 0;
+        if (toSpawn.Count > 0)
+        {
+            type = toSpawn[0];
+            toSpawn.RemoveAt(0);
+            index = 10; // Hardcoded to 10 for now
+        }
+        else
+        {
+            index = Random.Range(0, 10); // Weights
+        }
+        switch (index)
+        {
+            case 10:
+                SpawnPart(type); // From toSpawn
+                break;
+            case 0 or 1:
+                SpawnPart(Type.BATTERY); // 2
+                break;
+            case 2 or 3 or 4:
+                SpawnPart(Type.CHIP); // 3
+                break;
+            case 5 or 6:
+                SpawnPart(Type.DISK); // 2
+                break;
+            case 7 or 8 or 9:
+                SpawnPart(Type.SCREEN); // 3
+                break;
+        }
+        Debug.Log("Spawn " + type.ToString());
+        // Eventually would be nice to just count every object of every type on the scene and produce depending on that.
+    }
+
+    private void SpawnPart(Type type)
+    {
+        Vector3 point;
+        switch (type)
+        {
+            case Type.BATTERY:
+                point = new Vector3(-3.5f, 0.5f, -7f);
+                break;
+            case Type.CHIP:
+                point = new Vector3(-2.5f, 0.5f, -7f);
+                break;
+            case Type.DISK:
+                point = new Vector3(2.5f, 0.5f, -7f);
+                break;
+            case Type.SCREEN:
+                point = new Vector3(3.5f, 0.5f, -7f);
+                break;
+            default:
+                point = craftSpawnPoint;
+                Debug.Log("Craft");
+                break;
+        }
         GameObject prefab = GetPrefabFromType(type);
         Vector3 position = gridManager.GetSnappedPosition(point);
 
         GameObject go = Instantiate(prefab, position, Quaternion.identity);
         NetworkObject no = go.GetComponent<NetworkObject>();
-
-        if (no != null)
-        {
-            no.Spawn();
-        }
-        else
-        {
-            Debug.LogError($"Spawned prefab is missing NetworkObject: {prefab.name}");
-            return;
-        }
+        if (no != null) no.Spawn();
         Grabbable grab = go.GetComponent<Grabbable>();
         grab.type.Value = type; // This is probably set only on server side, not on client side it seems.
         gridManager.Add(go, type, position);
@@ -161,10 +233,15 @@ public class LevelManager : NetworkBehaviour
 
     private void StartOrder ()
     {
+        // Create order
         int type = Random.Range(deviceIndex0, lastTypeIndex + 1); // Range's max is exclusive
         lastID += 1;
         Order order = new Order(lastID, timeOrder, (Type)type);
         orders.Add(order);
+        // Recipe ingredients
+        List<Type> ingredientsList = recipesSO.GetIngredientList((Type)type);
+        toSpawn.AddRange(ingredientsList);
+        // Update UI
         UpdateDisplayOrders();
     }
 
@@ -242,8 +319,8 @@ public class LevelManager : NetworkBehaviour
     #region PUBLIC METHODS
 
     public void SpawnCraftedItem(Type type)
-    {        
-        SpawnItem(type, craftSpawnPoint);
+    {
+        SpawnPart(type);
     }
 
     public void DeliverOrder(Type type)

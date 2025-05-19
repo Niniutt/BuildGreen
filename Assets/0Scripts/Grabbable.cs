@@ -20,8 +20,7 @@ public class Grabbable : NetworkBehaviour
         }
         else if (snappedPosition.Value != Vector3.zero)
         {
-            // Not the best but OnValueChange doesn't seem to work
-            Debug.Log("Dropped: " + snappedPosition.Value);
+            // OnValueChange doesn't seem to work
             transform.position = snappedPosition.Value;
             snappedPosition.Value = Vector3.zero;
         }

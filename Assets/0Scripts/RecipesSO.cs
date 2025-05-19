@@ -46,4 +46,10 @@ public class RecipesSO : ScriptableObject
         new Recipe(Type.PHONE, new List<Type> {Type.SCREEN, Type.CHIP, Type.BATTERY}),
         new Recipe(Type.PC, new List<Type> {Type.SCREEN, Type.CHIP, Type.BATTERY, Type.DISK})
     };
+
+    public List<Type> GetIngredientList(Type type)
+    {
+        Recipe recipe = recipes[(int)type - (int)Type.TV];
+        return recipe.inputs;
+    }
 }
