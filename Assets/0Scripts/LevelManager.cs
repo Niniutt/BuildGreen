@@ -81,10 +81,10 @@ public class LevelManager : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        if (IsServer)
+        /*if (IsServer)
         {
             StartLevel();
-        }
+        }*/
     }
 
     private void InitUI()
@@ -102,6 +102,7 @@ public class LevelManager : NetworkBehaviour
     {
         // Find canva place and put up a first order
         InitUI();
+        InitUIClientRpc();
 
         // Temporary: Spawn first items
         InvokeRepeating(nameof(SpawnMaterials), 0, deltaMaterial);
@@ -110,6 +111,12 @@ public class LevelManager : NetworkBehaviour
         // Repeating functions
         InvokeRepeating(nameof(StartOrder), 0, deltaOrders);
         InvokeRepeating(nameof(CheckOrders), deltaCheck, deltaCheck);
+    }
+
+    [ClientRpc]
+    public void InitUIClientRpc()
+    {
+        InitUI();
     }
 
     // Repeating spawning of metal, plastic (x2), glass for just one second (scene animation)
