@@ -108,6 +108,7 @@ public class GridManager : MonoBehaviour
         occupiedPositions.Remove(op);
     }
 
+
     public List<Type> GetAssemblyCandidates()
     {
         assemblyCandidates.Clear();

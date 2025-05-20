@@ -1,6 +1,7 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class DestroyAfter : MonoBehaviour
+public class DestroyAfter : NetworkBehaviour
 {
     private readonly float destroyTime = 3f;
     private float timer = 0f;
@@ -17,7 +18,16 @@ public class DestroyAfter : MonoBehaviour
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
-            Destroy(gameObject);
+            DestroyObjectServerRpc();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroyObjectServerRpc()
+    {
+        if (!IsServer) return;
+        NetworkObject no = GetComponent<NetworkObject>();
+        if (no) no.Despawn();
+        Destroy(gameObject);
     }
 }

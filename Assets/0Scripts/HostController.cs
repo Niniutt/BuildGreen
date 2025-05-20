@@ -1,5 +1,6 @@
 using UnityEngine;
 using Unity.Netcode;
+using System.Collections;
 
 public class HostController : NetworkBehaviour
 {
@@ -220,9 +221,27 @@ public class HostController : NetworkBehaviour
                 // Deliver
                 gridManager.Remove(go, type);
                 levelManager.DeliverOrder(type);
-                Destroy(go, destroyDelay);
+                NetworkObject no = go.GetComponent<NetworkObject>();
+                DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();
             }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DestroyServerRpc(ulong networkObjectId)
+    {
+        StartCoroutine(DespawnAndDestroyWithDelay(networkObjectId, destroyDelay));
+    }
+
+    private System.Collections.IEnumerator DespawnAndDestroyWithDelay(ulong networkObjectId, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out var no) && no != null)
+        {
+            no.Despawn();
+            Destroy(no.gameObject);
         }
     }
 }

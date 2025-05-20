@@ -1,9 +1,10 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 
 
-public class Assembly : MonoBehaviour
+public class Craft : NetworkBehaviour
 {
     [SerializeField] private GridManager gridManager;
     [SerializeField] private RecipesSO recipesSO;
@@ -15,11 +16,12 @@ public class Assembly : MonoBehaviour
         // If player inZone and presses F begin craft.
         if (inZone && Input.GetKeyDown(KeyCode.F))
         {
-            Assemble();
+            AssembleServerRpc();
         }
     }
 
-    private void Assemble()
+    [ServerRpc(RequireOwnership = false)]
+    private void AssembleServerRpc()
     {
         // Check items on the assembly table
         List<Type> list = gridManager.GetAssemblyCandidates();
@@ -40,15 +42,10 @@ public class Assembly : MonoBehaviour
         }
         if (noFound)
         {
-            // Display "Invalid recipe" to the player
             Debug.Log("Invalid recipe");
         }
         else
         {
-            // If they form a valid recipe, begin craft.
-            // = craftingTime timer
-
-            // At the end of this, actually performing the craft in GridManager
             gridManager.Assemble(output);
         }
     }
