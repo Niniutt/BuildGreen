@@ -4,8 +4,11 @@ using TMPro;
 using Random = UnityEngine.Random;
 using Unity.Netcode;
 using Unity.VisualScripting;
+using UnityEngine.PlayerLoop;
+using UnityEngine.ProBuilder.Shapes;
+using System;
 
-struct Order
+struct Order : INetworkSerializable, IEquatable<Order>
 {
     public int ID;
     public int remainingTime;
@@ -20,9 +23,30 @@ struct Order
         status = OrderStatus.RUNNING;
     }
 
+    public Order(OrderStatus os = OrderStatus.NULL)
+    {
+        ID = 999;
+        remainingTime = 0;
+        type = Type.NULL;
+        status = os;
+    }
+
     public void print()
     {
         Debug.Log("Order " + ID + " with remaining time " + remainingTime + " of device type " + type + " is " + status);
+    }
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref ID);
+        serializer.SerializeValue(ref remainingTime);
+        serializer.SerializeValue(ref type);
+        serializer.SerializeValue(ref status);
+    }
+
+    public bool Equals(Order other)
+    {
+        throw new NotImplementedException();
     }
 }
 
@@ -40,7 +64,7 @@ public class LevelManager : NetworkBehaviour
     private int timeOrder = 60; // Max time to deliver an order
     private int lastID = 0;
     private readonly float deltaCheck = 1f;
-    private Order?[] displayOrders = new Order?[MAX_ORDERS];
+    private NetworkList<Order> displayOrders = new();
     private List<Order> orders = new();
     private readonly float deltaMaterial = 0.66f;
     private readonly float deltaPart = 3f;
@@ -101,7 +125,6 @@ public class LevelManager : NetworkBehaviour
     public void StartLevel()
     {
         // Find canva place and put up a first order
-        InitUI();
         InitUIClientRpc();
 
         // Temporary: Spawn first items
@@ -252,12 +275,13 @@ public class LevelManager : NetworkBehaviour
 
     private void UpdateDisplayOrders()
     {
+        displayOrders.Clear();
         int index = 0;
         foreach (Order order in orders)
         {
             if (order.status == OrderStatus.RUNNING && index < MAX_ORDERS)
             {
-                displayOrders[index] = order;
+                displayOrders.Add(order);
                 index++;
             }
             if (index == MAX_ORDERS)
@@ -269,26 +293,25 @@ public class LevelManager : NetworkBehaviour
         {
             StartOrder();
         }
-        if (index < MAX_ORDERS) // If list not completed
+        // If list not completed
+        for (int i = index; i < MAX_ORDERS; i++)
         {
-            for (int i = index; i < MAX_ORDERS; i++)
-            {
-                displayOrders[index] = null;
-                index++;
-            }
+            displayOrders.Add(new Order(OrderStatus.NULL));
         }
     }
 
-    private void DisplayOrders()
+    [ClientRpc]
+    private void DisplayOrdersClientRpc()
     {
         for (int i = 0; i < MAX_ORDERS; i++)
         {
-            if (displayOrders[i].HasValue)
+            // displayOrders will never have more than MAX_ORDERS elements
+            if (displayOrders[i].status == OrderStatus.RUNNING)
             {
                 UIorders[i].SetActive(true);
                 TMP_Text text = UIorders[i].GetComponentInChildren<TMP_Text>();
 
-                text.text = "Order " + displayOrders[i].Value.ID + " \n Goal: " + displayOrders[i].Value.type + " \n Time: " + displayOrders[i].Value.remainingTime + " \n Ingredients: ";
+                text.text = "Order " + displayOrders[i].ID + " \n Goal: " + displayOrders[i].type + " \n Time: " + displayOrders[i].remainingTime + " \n Ingredients: ";
             }
             else
             {
@@ -317,7 +340,7 @@ public class LevelManager : NetworkBehaviour
             orders[i] = order;
             UpdateDisplayOrders();
         }
-        DisplayOrders();
+        DisplayOrdersClientRpc();
     }
 
     #endregion

@@ -22,6 +22,7 @@ public enum OrderStatus
     RUNNING = 0,
     FINISHED = 1,
     FAILED = 2,
+    NULL = 999,
 }
 
 public struct Recipe
