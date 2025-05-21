@@ -22,7 +22,7 @@ public class Grabbable : NetworkBehaviour
         {
             // OnValueChange doesn't seem to work
             transform.position = snappedPosition.Value;
-            snappedPosition.Value = Vector3.zero;
+            if (IsServer) snappedPosition.Value = Vector3.zero;
         }
     }
 

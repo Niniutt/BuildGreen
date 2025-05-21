@@ -220,7 +220,7 @@ public class HostController : NetworkBehaviour
 
                 // Deliver
                 gridManager.Remove(go, type);
-                levelManager.DeliverOrder(type);
+                levelManager.DeliverOrderServerRpc(type);
                 NetworkObject no = go.GetComponent<NetworkObject>();
                 DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();

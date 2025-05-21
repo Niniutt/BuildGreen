@@ -145,6 +145,7 @@ public class LevelManager : NetworkBehaviour
     // Repeating spawning of metal, plastic (x2), glass for just one second (scene animation)
     private void SpawnMaterials()
     {
+        if (!IsServer) return;
         int type = Random.Range(0, 4); // Choosing material type
         switch(type)
         {
@@ -173,6 +174,7 @@ public class LevelManager : NetworkBehaviour
 
     private void SpawnParts()
     {
+        if (!IsServer) return;
         // Either spawn a part according to an order recipe (1), either randomly (2).
         Type type = Type.NULL;
         int index = 0;
@@ -261,6 +263,7 @@ public class LevelManager : NetworkBehaviour
 
     private void StartOrder ()
     {
+        if (!IsServer) return;
         // Create order
         int type = Random.Range(deviceIndex0, lastTypeIndex + 1); // Range's max is exclusive
         lastID += 1;
@@ -275,6 +278,7 @@ public class LevelManager : NetworkBehaviour
 
     private void UpdateDisplayOrders()
     {
+        if (!IsServer) return;
         displayOrders.Clear();
         int index = 0;
         foreach (Order order in orders)
@@ -322,6 +326,7 @@ public class LevelManager : NetworkBehaviour
 
     private void CheckOrders()
     {
+        if (!IsServer) return;
         // This is ran every second
         for (int i = 0; i < orders.Count; i++)
         {
@@ -351,8 +356,10 @@ public class LevelManager : NetworkBehaviour
         SpawnPart(type);
     }
 
-    public void DeliverOrder(Type type)
+    [ServerRpc(RequireOwnership = false)]
+    public void DeliverOrderServerRpc(Type type)
     {
+        if (!IsServer) return;
         // Correspond type with Type
         // Check if there is an order for this device
         for (int i = 0; i < orders.Count; i++)
