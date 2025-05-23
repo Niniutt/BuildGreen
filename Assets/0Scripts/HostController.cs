@@ -12,8 +12,8 @@ public class HostController : NetworkBehaviour
     [SerializeField] GameObject cameraPrefab;
     private GameObject thirdPersonCamera;
     private Grabber grabber;
-    public Vector3 grabberPosition = new();
-    public Quaternion grabberRotation = new();
+    [HideInInspector] public Vector3 grabberPosition = new();
+    [HideInInspector] public Quaternion grabberRotation = new();
 
     [Space]
 
@@ -35,8 +35,8 @@ public class HostController : NetworkBehaviour
     private float raycastDistance;
     private bool isGrounded = true;
 
-    public LayerMask groundLayer;
-    public bool firstPerson = false;
+    private LayerMask groundLayer;
+    [HideInInspector] public bool firstPerson = false;
 
     private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -1.5f);// (0f, 9f, -3f);
     // private float thirdPersonRotationX = 75f;
@@ -191,6 +191,9 @@ public class HostController : NetworkBehaviour
             {
                 grab.GrabServerRpc(no.NetworkObjectId);
             }
+
+            // Display mini-game
+            DisplayMiniGameMark();
         }
     }
 
@@ -225,7 +228,20 @@ public class HostController : NetworkBehaviour
                 DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();
             }
+
+            // Stop displaying mini-game
+            HideMiniGameMark();
         }
+    }
+
+    private void DisplayMiniGameMark()
+    {
+        Debug.Log("Grab: start display");
+    }
+
+    private void HideMiniGameMark()
+    {
+        Debug.Log("Ungrab: stop display");
     }
 
     [ServerRpc(RequireOwnership = false)]

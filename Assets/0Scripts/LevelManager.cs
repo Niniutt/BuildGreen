@@ -50,7 +50,7 @@ struct Order : INetworkSerializable, IEquatable<Order>
 public class LevelManager : NetworkBehaviour
 {
     private const int MAX_ORDERS = 3;
-    public const float MINI_GAME_PROBABILITY = 0.6f;
+    public const float MINI_GAME_PROBABILITY = 0.90f;
 
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
@@ -126,12 +126,12 @@ public class LevelManager : NetworkBehaviour
         InitUIClientRpc();
 
         // Temporary: Spawn first items
-        InvokeRepeating(nameof(SpawnMaterials), 0, deltaMaterial);
-        InvokeRepeating(nameof(SpawnParts), 0, deltaPart);
+        InvokeRepeating(nameof(SpawnMaterials), deltaCheck, deltaMaterial);
+        InvokeRepeating(nameof(SpawnParts), deltaCheck, deltaPart);
 
         // Repeating functions
-        InvokeRepeating(nameof(StartOrder), 0, deltaOrders);
-        InvokeRepeating(nameof(CheckOrders), deltaCheck, deltaCheck);
+        InvokeRepeating(nameof(StartOrder), deltaCheck, deltaOrders);
+        InvokeRepeating(nameof(CheckOrders), 2*deltaCheck, deltaCheck);
     }
 
     [ClientRpc]

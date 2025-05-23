@@ -148,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 2519117832544122336}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -436,7 +436,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   cameraPrefab: {fileID: 2220097857725365523, guid: 520bf9037bd019f4fb505d2dd9b73027, type: 3}
-  grabberTransform: {fileID: 0}
+  grabberPosition: {x: 0, y: 0, z: 0}
+  grabberRotation: {x: 0, y: 0, z: 0, w: 0}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8

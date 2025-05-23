@@ -8,6 +8,8 @@ public class Grabbable : NetworkBehaviour
     public NetworkVariable<bool> isChecked = new(false);
     public NetworkVariable<bool> isDeliveryReady = new(false);
 
+    private NetworkVariable<MiniGameType> miniGameType = new(MiniGameType.NULL);
+
     private NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
@@ -32,6 +34,7 @@ public class Grabbable : NetworkBehaviour
     public void GrabServerRpc(ulong playerNetworkObjectId)
     {
         isGrabbed.Value = true;
+        Debug.Log("Mini-game type: " + miniGameType.Value);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -52,5 +55,10 @@ public class Grabbable : NetworkBehaviour
         if (!IsOwner) return;
         grabberPosition.Value = position;
         grabberRotation.Value = rotation;
+    }
+
+    public void UpdateMiniGameType(MiniGameType mgt)
+    {
+        miniGameType.Value = mgt;
     }
 }
