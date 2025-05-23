@@ -5,6 +5,7 @@ public class DestroyAfter : NetworkBehaviour
 {
     private readonly float destroyTime = 3f;
     private float timer = 0f;
+    private bool isDespawned = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,10 +16,15 @@ public class DestroyAfter : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDespawned) return;
         timer -= Time.deltaTime;
         if (timer <= 0f)
         {
-            DestroyObjectServerRpc();
+            isDespawned = true;
+            if (IsServer)
+                GetComponent<NetworkObject>().Despawn();
+            else
+                DestroyObjectServerRpc();
         }
     }
 
@@ -28,6 +34,5 @@ public class DestroyAfter : NetworkBehaviour
         if (!IsServer) return;
         NetworkObject no = GetComponent<NetworkObject>();
         if (no) no.Despawn();
-        Destroy(gameObject);
     }
 }

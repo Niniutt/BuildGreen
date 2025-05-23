@@ -64,7 +64,7 @@ public class LevelManager : NetworkBehaviour
     private readonly float deltaCheck = 1f;
     private NetworkList<Order> displayOrders = new();
     private List<Order> orders = new();
-    private readonly float deltaMaterial = 0.66f;
+    private readonly float deltaMaterial = 2f;
     private readonly float deltaPart = 3f;
 
     // private int materialIndex0 = 0;
@@ -168,6 +168,7 @@ public class LevelManager : NetworkBehaviour
         GameObject go = Instantiate(prefab, point, Quaternion.identity);
         NetworkObject no = go.GetComponent<NetworkObject>();
         if (no != null) no.Spawn();
+        else Debug.LogError("No NetworkObject found on prefab: " + prefab.name);
     }
 
     private void SpawnParts()
@@ -243,7 +244,6 @@ public class LevelManager : NetworkBehaviour
     public void Despawn(GameObject go)
     {
         go.GetComponent<NetworkObject>().Despawn();
-        DestroyImmediate(go);
     }
 
     private GameObject GetPrefabFromType(Type type)

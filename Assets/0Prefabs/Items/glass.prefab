@@ -230,8 +230,8 @@ MonoBehaviour:
   AuthorityMode: 0
   TickSyncChildren: 0
   UseUnreliableDeltas: 0
-  SyncPositionX: 1
-  SyncPositionY: 1
+  SyncPositionX: 0
+  SyncPositionY: 0
   SyncPositionZ: 1
   SyncRotAngleX: 0
   SyncRotAngleY: 0
@@ -261,6 +261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83737a8fd102b3947bad205af69879c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!114 &-1148526439485830623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,9 +279,9 @@ MonoBehaviour:
     m_InternalValue: 0
   isGrabbed:
     m_InternalValue: 0
-  grabberPosition:
-    m_InternalValue: {x: 0, y: 0, z: 0}
-  grabberRotation:
-    m_InternalValue: {x: 0, y: 0, z: 0, w: 1}
+  isChecked:
+    m_InternalValue: 0
+  isDeliveryReady:
+    m_InternalValue: 0
   snappedPosition:
     m_InternalValue: {x: 0, y: 0, z: 0}
