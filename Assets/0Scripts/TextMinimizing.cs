@@ -7,12 +7,11 @@ public class TextMinimizing : MiniGame
 {
     // Logic
     [SerializeField] private TMP_Text sentence;
-    private string solution;
     private string current;
     private bool comment;
 
     private readonly string[] sentences = new string[]{ "print('Yo') % Hi", "array =    ['Yo', 'Lo']", "number = 42"};
-    private readonly string[] solutions = new string[] { "print('Yo')", "array=['Yo','Lo']", "number=42" };
+    // private readonly string[] solutions = new string[] { "print('Yo')", "array=['Yo','Lo']", "number=42" };
 
     // Animations
     [SerializeField] private TMP_Text mark;
@@ -22,12 +21,11 @@ public class TextMinimizing : MiniGame
     private readonly Color correct = Color.green;
     private readonly Color wrong = Color.red;
 
-    void Start()
+    private new void Start()
     {
         base.Start();
 
         int index = Random.Range(0, sentences.Length - 1);
-        solution = solutions[index];
         sentence.text = sentences[index];
         current = sentences[index];
         comment = false;

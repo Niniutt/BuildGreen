@@ -134,7 +134,7 @@ public class GridManager : MonoBehaviour
         {
             int index = assemblyCandidates[i];
             ObjectPosition op = occupiedPositions[index];
-            DestroyImmediate(op.go);
+            levelManager.Despawn(op.go);
         }
         // We have to remove all the ops in the end otherwise they disturb the indexes (from end to start)
         for (int i = assemblyCandidates.Count - 1; i >= 0; i--)

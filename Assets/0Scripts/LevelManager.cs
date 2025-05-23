@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using TMPro;
 using Random = UnityEngine.Random;
 using Unity.Netcode;
-using Unity.VisualScripting;
-using UnityEngine.PlayerLoop;
-using UnityEngine.ProBuilder.Shapes;
 using System;
 
 struct Order : INetworkSerializable, IEquatable<Order>
@@ -53,6 +50,7 @@ struct Order : INetworkSerializable, IEquatable<Order>
 public class LevelManager : NetworkBehaviour
 {
     private const int MAX_ORDERS = 3;
+    public const float MINI_GAME_PROBABILITY = 0.6f;
 
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
@@ -236,9 +234,16 @@ public class LevelManager : NetworkBehaviour
         GameObject go = Instantiate(prefab, position, Quaternion.identity);
         NetworkObject no = go.GetComponent<NetworkObject>();
         if (no != null) no.Spawn();
+        else Debug.LogError("No NetworkObject found on prefab: " + prefab.name);
         Grabbable grab = go.GetComponent<Grabbable>();
         grab.type.Value = type; // This is probably set only on server side, not on client side it seems.
         gridManager.Add(go, type, position);
+    }
+
+    public void Despawn(GameObject go)
+    {
+        go.GetComponent<NetworkObject>().Despawn();
+        DestroyImmediate(go);
     }
 
     private GameObject GetPrefabFromType(Type type)

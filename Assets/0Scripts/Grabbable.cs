@@ -5,9 +5,11 @@ public class Grabbable : NetworkBehaviour
 {
     public NetworkVariable<Type> type;
     public NetworkVariable<bool> isGrabbed = new(false);
+    public NetworkVariable<bool> isChecked = new(false);
+    public NetworkVariable<bool> isDeliveryReady = new(false);
 
-    public NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    public NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public NetworkVariable<Vector3> snappedPosition = new(Vector3.zero);
 
