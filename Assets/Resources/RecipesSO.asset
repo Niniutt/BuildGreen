@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2a86ed1f03e15f45b65144826c916a1, type: 3}
   m_Name: RecipesSO
   m_EditorClassIdentifier: 
+  checkMark: {fileID: 2800000, guid: 57a00dcfcb898d14dacc54b3f9763568, type: 3}
+  failMark: {fileID: 2800000, guid: 79bf3b267039d7a4d98e6e1ec0f1962f, type: 3}

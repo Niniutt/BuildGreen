@@ -71,7 +71,7 @@ public class TextMinimizing : MiniGame
         }
         if (current == "")
         {
-            EndMiniGame();
+            EndMiniGame(true);
             FrameX.color = baseColor;
             FrameS.color = baseColor;
         }

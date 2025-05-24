@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MiniGame : MonoBehaviour
@@ -49,13 +50,25 @@ public class MiniGame : MonoBehaviour
         }
         if (timer == 0 || errors == maxErrors)
         {
-            EndMiniGame();
+            EndMiniGame(false);
         }
     }
 
-    public void EndMiniGame()
+    // MAKE THIS SERVER RPC
+    public void EndMiniGame(bool win, Grabbable grab = null)
     {
         hasStarted = false;
+        gameObject.SetActive(false);
+        if (win && grab)
+        {
+            // Fix grabbable's data
+            grab.isDeliveryReady.Value = true;
+        }
+        else
+        {
+            // Handle failure logic here, e.g., reset the game or notify the player
+            Debug.Log("Mini-game failed.");
+        }
     }
 
     public void UpdateTime()

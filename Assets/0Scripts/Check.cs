@@ -6,9 +6,6 @@ public class Check : NetworkBehaviour
     [SerializeField] private LevelManager levelManager;
     private float probability;
 
-    [SerializeField] private Texture2D checkMark;
-    [SerializeField] private Texture2D failMark;
-
     private void Start()
     {
         probability = LevelManager.MINI_GAME_PROBABILITY;
@@ -35,30 +32,8 @@ public class Check : NetworkBehaviour
         if (grab.isGrabbed.Value == true || grab.isChecked.Value == true) return;
         bool check = Random.Range(0f, 1f) > probability;
         grab.isChecked.Value = true;
-        UpdateCheckClientRpc(networkObjectId, check);
+        grab.UpdateCheckClientRpc(networkObjectId, check);
         // Call grabbable to update mini-game
         if (!check) grab.UpdateMiniGameType(grab.type.Value);
-    }
-
-    [ClientRpc]
-    private void UpdateCheckClientRpc(ulong networkObjectId, bool check)
-    {
-        NetworkObject netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
-        if (netObj == null) return;
-        GameObject go = netObj.gameObject;
-        SpriteRenderer spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
-        if (!spriteRenderer) return;
-
-        if (check) spriteRenderer.sprite = NewSprite();
-        else spriteRenderer.sprite = NewSprite(false);
-    }
-
-    private Sprite NewSprite(bool check = true)
-    {
-        return Sprite.Create(
-            check? checkMark : failMark,
-            new Rect(0, 0, checkMark.width, checkMark.height),
-            new Vector2(0.5f, 0.5f)
-        );
     }
 }

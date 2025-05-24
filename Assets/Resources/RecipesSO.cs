@@ -48,6 +48,9 @@ public struct Recipe
 [CreateAssetMenu(fileName = "RecipesSO", menuName = "Scriptable Objects/RecipesSO", order = 1)]
 public class RecipesSO : ScriptableObject
 {
+    public Texture2D checkMark;
+    public Texture2D failMark;
+
     public Recipe[] recipes = new Recipe[]
     {
         new Recipe(Type.TV, new List<Type> {Type.SCREEN}),

@@ -10,7 +10,7 @@ public class Grabbable : NetworkBehaviour
     public NetworkVariable<bool> isDeliveryReady = new(false);
 
     public NetworkVariable<Type> miniGameBase = new(Type.NULL);
-    private NetworkVariable<MiniGameType> miniGameType = new(MiniGameType.NULL);
+    public NetworkVariable<MiniGameType> miniGameType = new(MiniGameType.NULL);
 
     private NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -78,5 +78,29 @@ public class Grabbable : NetworkBehaviour
         MiniGameType mgt = recipesSO.GetMiniGameType(ingredientType);
         miniGameBase.Value = ingredientType;
         miniGameType.Value = mgt;
+    }
+
+
+
+    [ClientRpc]
+    public void UpdateCheckClientRpc(ulong networkObjectId, bool check)
+    {
+        NetworkObject netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        if (netObj == null) return;
+        GameObject go = netObj.gameObject;
+        SpriteRenderer spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
+        if (!spriteRenderer) return;
+
+        if (check) spriteRenderer.sprite = NewSprite();
+        else spriteRenderer.sprite = NewSprite(false);
+    }
+
+    private Sprite NewSprite(bool check = true)
+    {
+        return Sprite.Create(
+            check ? recipesSO.checkMark : recipesSO.failMark,
+            new Rect(0, 0, recipesSO.checkMark.width, recipesSO.checkMark.height),
+            new Vector2(0.5f, 0.5f)
+        );
     }
 }

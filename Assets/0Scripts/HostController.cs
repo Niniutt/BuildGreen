@@ -255,6 +255,9 @@ public class HostController : NetworkBehaviour
 
     public void ToggleMiniGameMark(Type baseType)
     {
+        DiskMark.gameObject.SetActive(!DiskMark.gameObject.activeSelf);
+        return;
+        /* // Temporary
         switch (baseType)
         {
             case Type.DISK:
@@ -272,7 +275,7 @@ public class HostController : NetworkBehaviour
             default:
                 Debug.LogWarning("Unknown type for mini-game mark: " + baseType);
                 break;
-        }
+        }*/
     }
 
     [ServerRpc(RequireOwnership = false)]

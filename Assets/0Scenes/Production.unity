@@ -2647,6 +2647,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f14c22d37c5317499a948c467a8e8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniGameType: 0
+  miniGameCanvas: {fileID: 586442224}
+  miniGame: {fileID: 0}
+  start: 0
 --- !u!1001 &210196043
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4311,6 +4315,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f14c22d37c5317499a948c467a8e8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniGameType: 1
+  miniGameCanvas: {fileID: 586442224}
+  miniGame: {fileID: 1741020427}
+  start: 0
 --- !u!1001 &328729454
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20265,6 +20273,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f14c22d37c5317499a948c467a8e8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniGameType: 999
+  miniGameCanvas: {fileID: 586442224}
+  miniGame: {fileID: 0}
+  start: 0
 --- !u!1001 &1435477711
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24157,6 +24169,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f14c22d37c5317499a948c467a8e8e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  miniGameType: 2
+  miniGameCanvas: {fileID: 586442224}
+  miniGame: {fileID: 0}
+  start: 0
 --- !u!1001 &1781043507
 PrefabInstance:
   m_ObjectHideFlags: 0
