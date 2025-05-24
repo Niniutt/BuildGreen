@@ -4,7 +4,6 @@ using UnityEngine;
 public class Check : NetworkBehaviour
 {
     [SerializeField] private LevelManager levelManager;
-    [SerializeField] private RecipesSO recipesSO;
     private float probability;
 
     [SerializeField] private Texture2D checkMark;
@@ -38,7 +37,7 @@ public class Check : NetworkBehaviour
         grab.isChecked.Value = true;
         UpdateCheckClientRpc(networkObjectId, check);
         // Call grabbable to update mini-game
-        if (!check) grab.UpdateMiniGameType(recipesSO.GetMiniGameType(grab.type.Value));
+        if (!check) grab.UpdateMiniGameType(grab.type.Value);
     }
 
     [ClientRpc]

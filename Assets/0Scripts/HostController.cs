@@ -4,12 +4,12 @@ using System.Collections;
 
 public class HostController : NetworkBehaviour
 {
+    [SerializeField] GameObject cameraPrefab;
     private BoxCollider boxCollider;
     private Grabbable grab;
     private GridManager gridManager;
     private LevelManager levelManager;
     private Rigidbody rb;
-    [SerializeField] GameObject cameraPrefab;
     private GameObject thirdPersonCamera;
     private Grabber grabber;
     [HideInInspector] public Vector3 grabberPosition = new();
@@ -35,13 +35,18 @@ public class HostController : NetworkBehaviour
     private float raycastDistance;
     private bool isGrounded = true;
 
-    private LayerMask groundLayer;
+    [HideInInspector] public LayerMask groundLayer;
     [HideInInspector] public bool firstPerson = false;
 
     private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -1.5f);// (0f, 9f, -3f);
     // private float thirdPersonRotationX = 75f;
 
     private float destroyDelay = 0.5f;
+
+    private Transform DiskMark;
+    private Transform ScreenMark;
+    private Transform ChipMark;
+    private Transform BatteryMark;
 
     public override void OnNetworkSpawn()
     {
@@ -58,6 +63,22 @@ public class HostController : NetworkBehaviour
         levelManager = FindFirstObjectByType<LevelManager>();
         thirdPersonCamera = Instantiate(cameraPrefab);
         grabber = GetComponentInChildren<Grabber>();
+
+        // Get mini-game marks that have MiniGameMark tag
+        GameObject[] marks = GameObject.FindGameObjectsWithTag("MiniGameMark");
+        if (marks.Length == 0 || marks.Length > 4)
+        {
+            Debug.LogError("Failed Init: Incorrect number of mini game marks");
+            return;
+        }
+        foreach (GameObject mark in marks)
+        {
+            if (mark.name[0] == 'D') DiskMark = mark.transform;
+            else if (mark.name[0] == 'S') ScreenMark = mark.transform;
+            else if (mark.name[0] == 'C') ChipMark = mark.transform;
+            else if (mark.name[0] == 'B') BatteryMark = mark.transform;
+            mark.SetActive(false); // Hide marks initially
+        }
 
         // Jump raycast init
         playerHeight = boxCollider.size.y * transform.localScale.y;
@@ -192,8 +213,8 @@ public class HostController : NetworkBehaviour
                 grab.GrabServerRpc(no.NetworkObjectId);
             }
 
-            // Display mini-game
-            DisplayMiniGameMark();
+            // Display mini-game if there is one
+            if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);
         }
     }
 
@@ -216,11 +237,9 @@ public class HostController : NetworkBehaviour
             grabberPosition = snappedPosition;
 
             // Check if ungrab is actually a delivery (two possible positions)
+            Type type = grab.type.Value;
             if (Mathf.Abs(snappedPosition.x) == 0.5f && snappedPosition.z == 8.5f)
             {
-                // Get object data
-                Type type = grab.type.Value;
-
                 // Deliver
                 gridManager.Remove(go, type);
                 levelManager.DeliverOrderServerRpc(type);
@@ -230,18 +249,30 @@ public class HostController : NetworkBehaviour
             }
 
             // Stop displaying mini-game
-            HideMiniGameMark();
+            if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);
         }
     }
 
-    private void DisplayMiniGameMark()
+    public void ToggleMiniGameMark(Type baseType)
     {
-        Debug.Log("Grab: start display");
-    }
-
-    private void HideMiniGameMark()
-    {
-        Debug.Log("Ungrab: stop display");
+        switch (baseType)
+        {
+            case Type.DISK:
+                DiskMark.gameObject.SetActive(!DiskMark.gameObject.activeSelf);
+                break;
+            case Type.SCREEN:
+                ScreenMark.gameObject.SetActive(!ScreenMark.gameObject.activeSelf);
+                break;
+            case Type.CHIP:
+                ChipMark.gameObject.SetActive(!ChipMark.gameObject.activeSelf);
+                break;
+            case Type.BATTERY:
+                BatteryMark.gameObject.SetActive(!BatteryMark.gameObject.activeSelf);
+                break;
+            default:
+                Debug.LogWarning("Unknown type for mini-game mark: " + baseType);
+                break;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

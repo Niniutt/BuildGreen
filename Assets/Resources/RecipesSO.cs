@@ -62,23 +62,25 @@ public class RecipesSO : ScriptableObject
         return recipe.inputs;
     }
 
-    public MiniGameType GetMiniGameType(Type type)
+    // Receives a part type and returns a mini-game
+    public MiniGameType GetMiniGameType(Type ingredientType)
     {
-        List<Type> ingredients = GetIngredientList(type);
-        // Choose random ingredient
-        Type ingredientType = ingredients[Random.Range(0, ingredients.Count)];
         // Choose mini-game type based on the ingredient
-        /*switch(ingredientType)
+        return MiniGameType.MINIMIZING; // Temporary
+        /*switch (ingredientType)
         {
             case Type.SCREEN:
                 return MiniGameType.FILE_TYPE;
             case Type.CHIP:
-                return MiniGameType.MINIMIZING;
-            case Type.DISK:
                 return MiniGameType.SEARCH_ALGO;
+            case Type.DISK:
+                return MiniGameType.MINIMIZING;
+            case Type.BATTERY:
+                return MiniGameType.MINIMIZING; // To be changed later
             default:
                 break;
-        }*/
-        return MiniGameType.MINIMIZING;
+        }
+        return MiniGameType.NULL;
+        */
     }
 }

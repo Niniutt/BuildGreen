@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,12 +9,25 @@ public class Grabbable : NetworkBehaviour
     public NetworkVariable<bool> isChecked = new(false);
     public NetworkVariable<bool> isDeliveryReady = new(false);
 
+    public NetworkVariable<Type> miniGameBase = new(Type.NULL);
     private NetworkVariable<MiniGameType> miniGameType = new(MiniGameType.NULL);
 
     private NetworkVariable<Vector3> grabberPosition = new(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<Quaternion> grabberRotation = new(Quaternion.identity, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public NetworkVariable<Vector3> snappedPosition = new(Vector3.zero);
+
+    private RecipesSO recipesSO;
+
+    public override void OnNetworkSpawn()
+    {
+        recipesSO = Resources.Load<RecipesSO>("RecipesSO");
+        if (recipesSO == null)
+        {
+            Debug.LogError("RecipesSO not found in Resources folder.");
+            return;
+        }
+    }
 
     private void Update()
     {
@@ -34,7 +48,6 @@ public class Grabbable : NetworkBehaviour
     public void GrabServerRpc(ulong playerNetworkObjectId)
     {
         isGrabbed.Value = true;
-        Debug.Log("Mini-game type: " + miniGameType.Value);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -57,8 +70,13 @@ public class Grabbable : NetworkBehaviour
         grabberRotation.Value = rotation;
     }
 
-    public void UpdateMiniGameType(MiniGameType mgt)
+    public void UpdateMiniGameType(Type type)
     {
+        List<Type> ingredients = recipesSO.GetIngredientList(type);
+        // Choose random ingredient
+        Type ingredientType = ingredients[Random.Range(0, ingredients.Count)];
+        MiniGameType mgt = recipesSO.GetMiniGameType(ingredientType);
+        miniGameBase.Value = ingredientType;
         miniGameType.Value = mgt;
     }
 }
