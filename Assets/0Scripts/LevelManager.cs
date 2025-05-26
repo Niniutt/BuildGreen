@@ -4,6 +4,7 @@ using TMPro;
 using Random = UnityEngine.Random;
 using Unity.Netcode;
 using System;
+using System.Collections;
 
 struct Order : INetworkSerializable, IEquatable<Order>
 {
@@ -96,8 +97,11 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] private GameObject metalPrefab;
     [SerializeField] private GameObject plasticPrefab;
     [SerializeField] private GameObject glassPrefab;
+    [SerializeField] private GameObject firePrefab;
 
     private List<Type> toSpawn = new();
+
+    public Transform[] FireSpawnPoints;
 
     #region PRIVATE METHODS
 
@@ -132,6 +136,10 @@ public class LevelManager : NetworkBehaviour
         // Repeating functions
         InvokeRepeating(nameof(StartOrder), deltaCheck, deltaOrders);
         InvokeRepeating(nameof(CheckOrders), 2*deltaCheck, deltaCheck);
+
+        //Fire Spawner
+        FireSpawnPoints = gridManager.GetAvailableFireSpawnPoints().ToArray();
+        StartCoroutine(FireSpawner());
     }
 
     [ClientRpc]
@@ -352,6 +360,44 @@ public class LevelManager : NetworkBehaviour
         }
         DisplayOrdersClientRpc();
     }
+
+    private IEnumerator FireSpawner()
+    {
+        float elapsedTime = 0f;
+        float baseInterval = 10f; // starting average wait time
+        float minInterval = 1f;   // shortest possible wait
+
+        while (true)
+        {
+            elapsedTime += Time.deltaTime;
+
+            
+            float currentInterval = Mathf.Max(minInterval, baseInterval - (elapsedTime / 30f));
+            float waitTime = Random.Range(currentInterval / 2f, currentInterval);
+
+            yield return new WaitForSeconds(waitTime);
+            SpawnFire();
+        }
+    }
+
+    private void SpawnFire()
+    {
+        Transform selectedSpawnPoint = FireSpawnPoints[Random.Range(0, FireSpawnPoints.Length)];
+
+        // Instantiate the fire object
+        GameObject fireGO = Instantiate(firePrefab, selectedSpawnPoint.position, firePrefab.transform.rotation);
+
+        NetworkObject netObj = fireGO.GetComponent<NetworkObject>();
+        if (netObj != null)
+        {
+            netObj.Spawn(); // This makes it visible to all clients and the server
+        }
+        else
+        {
+            Debug.LogError("Fire prefab is missing NetworkObject component!");
+        }
+    }
+
 
     #endregion
     #region PUBLIC METHODS

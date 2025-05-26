@@ -6,6 +6,7 @@ TagManager:
   tags:
   - GridTag
   - MiniGameMark
+  - Fire
   layers:
   - Default
   - TransparentFX

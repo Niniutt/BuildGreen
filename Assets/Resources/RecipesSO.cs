@@ -14,6 +14,7 @@ public enum Type
     SERVER = 8,
     PHONE = 9,
     PC = 10,
+    EXTINGUISHER = 11,
     NULL = 999,
 }
 

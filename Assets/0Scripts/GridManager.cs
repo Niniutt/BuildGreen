@@ -148,5 +148,30 @@ public class GridManager : MonoBehaviour
         levelManager.SpawnCraftedItem(output);
     }
 
+    public List<Transform> GetAvailableFireSpawnPoints()
+    {
+        List<Transform> spawnPoints = new();
+
+        for (float x = minX; x <= maxX; x += 1f)
+        {
+            for (float z = minZ; z <= maxZ; z += 1f)
+            {
+                Vector3 position = new Vector3(x, yOffset, z);
+                if (!CheckPosition(null, position))
+                {
+                    // Create a dummy Transform at this position
+                    GameObject spawnMarker = new GameObject($"FireSpawnPoint_{x}_{z}");
+                    spawnMarker.transform.position = GetSnappedPosition(position);
+                    spawnPoints.Add(spawnMarker.transform);
+                }
+            }
+        }
+
+        return spawnPoints;
+    }
+
+
+
+
     #endregion
 }

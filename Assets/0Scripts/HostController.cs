@@ -1,6 +1,7 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
+using System.Collections.Generic;
 
 public class HostController : NetworkBehaviour
 {
@@ -134,6 +135,14 @@ public class HostController : NetworkBehaviour
             grabberPosition = grabber.transform.position;
             grabberRotation = transform.rotation;
         }
+
+        if (Input.GetKeyDown(KeyCode.G) && grab != null && grab.isGrabbed.Value && grab.type.Value == Type.EXTINGUISHER)
+        {
+            Debug.Log("G pressed with extinguisher in hand");
+            TryExtinguish();
+        }
+
+
     }
 
     private void FixedUpdate()
@@ -299,4 +308,60 @@ public class HostController : NetworkBehaviour
     {
         grab.UpdateCheckClientRpc(grab.GetComponent<NetworkObject>().NetworkObjectId, true);
     }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ExtinguishFireServerRpc(ulong networkObjectId)
+    {
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out var no))
+        {
+            no.Despawn();
+            Destroy(no.gameObject);
+        }
+    }
+
+
+    private List<Vector3> GetForwardGridPositions()
+    {
+        List<Vector3> positions = new();
+        Vector3 forward = transform.forward.normalized;
+        Vector3 origin = transform.position;
+
+        for (int i = 1; i <= 3; i++)
+        {
+            Vector3 checkPos = origin + forward * i;
+            Vector3 snapped = gridManager.GetSnappedPosition(checkPos);
+            positions.Add(snapped);
+        }
+
+        return positions;
+    }
+
+    private void TryExtinguish()
+    {
+        Vector3 origin = transform.position;
+        Vector3 direction = transform.forward;
+        float range = 1.5f;
+
+        for (float i = 0.5f; i <= range; i += 0.5f)
+        {
+            Vector3 checkPos = gridManager.GetSnappedPosition(origin + direction * i);
+            Debug.Log("Checking position: " + checkPos);
+
+            Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f);
+            foreach (var col in colliders)
+            {
+                Debug.Log("Found collider: " + col.name);
+                if (col.CompareTag("Fire"))
+                {
+                    Debug.Log("Fire found! Requesting server to extinguish");
+                    var netObj = col.GetComponent<NetworkObject>();
+                    if (netObj != null)
+                    {
+                        ExtinguishFireServerRpc(netObj.NetworkObjectId);
+                    }
+                }
+            }
+        }
+    }
+
 }
