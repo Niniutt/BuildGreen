@@ -122,6 +122,11 @@ public class LevelManager : NetworkBehaviour
             UIorder.SetActive(false); // Deactivate all before they pop again
             UIorders[i] = UIorder;
         }
+        GameObject[] marks = GameObject.FindGameObjectsWithTag("MiniGameMark");
+        foreach (GameObject mark in marks)
+        {
+            mark.SetActive(false);
+        }
     }
 
     public void StartLevel()
@@ -130,7 +135,7 @@ public class LevelManager : NetworkBehaviour
         InitUIClientRpc();
 
         // Temporary: Spawn first items
-        InvokeRepeating(nameof(SpawnMaterials), deltaCheck, deltaMaterial);
+        // InvokeRepeating(nameof(SpawnMaterials), deltaCheck, deltaMaterial);
         InvokeRepeating(nameof(SpawnParts), deltaCheck, deltaPart);
 
         // Repeating functions
@@ -328,7 +333,7 @@ public class LevelManager : NetworkBehaviour
                 UIorders[i].SetActive(true);
                 TMP_Text text = UIorders[i].GetComponentInChildren<TMP_Text>();
 
-                text.text = "Order " + displayOrders[i].ID + " \n Goal: " + displayOrders[i].type + " \n Time: " + displayOrders[i].remainingTime + " \n Ingredients: ";
+                text.text = "Order " + displayOrders[i].ID + " \n Goal: " + displayOrders[i].type + " \n Time: " + displayOrders[i].remainingTime + " \n Ingredients:\n " + recipesSO.GetIngredientString(displayOrders[i].type); ;
             }
             else
             {

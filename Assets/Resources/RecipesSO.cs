@@ -66,6 +66,17 @@ public class RecipesSO : ScriptableObject
         return recipe.inputs;
     }
 
+    public string GetIngredientString(Type type)
+    {
+        string result = "";
+        Recipe recipe = recipes[(int)type - (int)Type.TV];
+        foreach (Type ingredient in recipe.inputs)
+        {
+            result += ingredient.ToString()[0] + " ";
+        }
+        return result;
+    }
+
     // Receives a part type and returns a mini-game
     public MiniGameType GetMiniGameType(Type ingredientType)
     {

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class MiniGame : MonoBehaviour
 {
+    private readonly int gameDurationConst = 10;
+
     private int gameDuration = 10;
     private int timer = 0;
     private float startDelay = 0f;
@@ -19,26 +21,19 @@ public class MiniGame : MonoBehaviour
     [SerializeField] private TMP_Text scoreUI;
     [SerializeField] private TMP_Text errorUI;
 
-    public void Start()
+    virtual public void MiniGameInit()
     {
-        MiniGameInit();
-    }
+        gameDuration = gameDurationConst;
+        score = 0;
+        errors = 0;
 
-    public void MiniGameStart()
-    {
-        InvokeRepeating(nameof(UpdateMiniGame), startDelay, repetitionDelay);
-    }
-
-    private void MiniGameInit(int gameDuration = 10, int score = 0, int errors = 0)
-    {
-        this.gameDuration = gameDuration;
-        this.score = score;
-        this.errors = errors;
-
-        timer = this.gameDuration;
-        hasStarted = true;
+        timer = gameDuration;
 
         UpdateErrors(0);
+
+        hasStarted = true;
+
+        InvokeRepeating(nameof(UpdateMiniGame), startDelay, repetitionDelay);
     }
 
     private void UpdateMiniGame()
@@ -60,22 +55,18 @@ public class MiniGame : MonoBehaviour
         gameObject.SetActive(false);
 
         CancelInvoke(nameof(UpdateMiniGame));
-        MiniGameInit();
         
         if (win)
         {
+            Debug.Log("Mini-game win!");
             // Get Player
             HostController hc = GetHostController(NetworkManager.Singleton.LocalClientId);
-            if (hc == null)
-            {
-                Debug.LogError("GetHostController not working");
-            }
             hc.UpdateGrabbable();
         }
         else
         {
             // Handle failure logic here, e.g., reset the game or notify the player
-            Debug.Log("Mini-game failed.");
+            Debug.Log("Mini-game failed...");
         }
     }
 
@@ -97,7 +88,7 @@ public class MiniGame : MonoBehaviour
         errorUI.text = "Errors: " + errors;
     }
 
-    public HostController GetHostController(ulong clientId)
+    private HostController GetHostController(ulong clientId)
     {
         if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var networkClient))
         {

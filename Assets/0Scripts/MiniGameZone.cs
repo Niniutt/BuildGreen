@@ -42,7 +42,7 @@ public class MiniGameZone : MonoBehaviour
             Debug.Log("Mini-game " + miniGameType + " started.");
             // Show the mini-game canvas
             miniGameCanvas.gameObject.SetActive(true);
-
+            miniGame.MiniGameInit();
 
             start = false; // Reset start to prevent multiple triggers
         }
