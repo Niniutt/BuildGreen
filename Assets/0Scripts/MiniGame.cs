@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -20,13 +21,11 @@ public class MiniGame : MonoBehaviour
 
     public void Start()
     {
-        MiniGameStart();
+        MiniGameInit();
     }
 
-    private void MiniGameStart()
+    public void MiniGameStart()
     {
-        MiniGameInit();
-
         InvokeRepeating(nameof(UpdateMiniGame), startDelay, repetitionDelay);
     }
 
@@ -55,14 +54,23 @@ public class MiniGame : MonoBehaviour
     }
 
     // MAKE THIS SERVER RPC
-    public void EndMiniGame(bool win, Grabbable grab = null)
+    public void EndMiniGame(bool win)
     {
         hasStarted = false;
         gameObject.SetActive(false);
-        if (win && grab)
+
+        CancelInvoke(nameof(UpdateMiniGame));
+        MiniGameInit();
+        
+        if (win)
         {
-            // Fix grabbable's data
-            grab.isDeliveryReady.Value = true;
+            // Get Player
+            HostController hc = GetHostController(NetworkManager.Singleton.LocalClientId);
+            if (hc == null)
+            {
+                Debug.LogError("GetHostController not working");
+            }
+            hc.UpdateGrabbable();
         }
         else
         {
@@ -87,5 +95,20 @@ public class MiniGame : MonoBehaviour
     {
         errors += newErrors;
         errorUI.text = "Errors: " + errors;
+    }
+
+    public HostController GetHostController(ulong clientId)
+    {
+        if (NetworkManager.Singleton.ConnectedClients.TryGetValue(clientId, out var networkClient))
+        {
+            var playerObj = networkClient.PlayerObject;
+            if (playerObj != null)
+            {
+                return playerObj.GetComponent<HostController>();
+            }
+        }
+
+        Debug.LogWarning($"HostController not found for client ID {clientId}.");
+        return null;
     }
 }

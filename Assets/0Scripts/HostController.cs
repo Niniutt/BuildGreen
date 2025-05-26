@@ -294,4 +294,9 @@ public class HostController : NetworkBehaviour
             Destroy(no.gameObject);
         }
     }
+
+    public void UpdateGrabbable()
+    {
+        grab.UpdateCheckClientRpc(grab.GetComponent<NetworkObject>().NetworkObjectId, true);
+    }
 }

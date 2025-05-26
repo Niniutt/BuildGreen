@@ -80,8 +80,6 @@ public class Grabbable : NetworkBehaviour
         miniGameType.Value = mgt;
     }
 
-
-
     [ClientRpc]
     public void UpdateCheckClientRpc(ulong networkObjectId, bool check)
     {
@@ -91,8 +89,11 @@ public class Grabbable : NetworkBehaviour
         SpriteRenderer spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
         if (!spriteRenderer) return;
 
-        if (check) spriteRenderer.sprite = NewSprite();
-        else spriteRenderer.sprite = NewSprite(false);
+        Grabbable grab = go.GetComponent<Grabbable>();
+        grab.isChecked.Value = true;
+        grab.isDeliveryReady.Value = check;
+
+        spriteRenderer.sprite = NewSprite(check);
     }
 
     private Sprite NewSprite(bool check = true)

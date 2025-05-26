@@ -31,7 +31,6 @@ public class Check : NetworkBehaviour
         Grabbable grab = go.GetComponent<Grabbable>();
         if (grab.isGrabbed.Value == true || grab.isChecked.Value == true) return;
         bool check = Random.Range(0f, 1f) > probability;
-        grab.isChecked.Value = true;
         grab.UpdateCheckClientRpc(networkObjectId, check);
         // Call grabbable to update mini-game
         if (!check) grab.UpdateMiniGameType(grab.type.Value);

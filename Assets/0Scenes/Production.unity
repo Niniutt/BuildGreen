@@ -4317,7 +4317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniGameType: 1
   miniGameCanvas: {fileID: 586442224}
-  miniGame: {fileID: 1741020427}
+  miniGame: {fileID: 586442226}
   start: 0
 --- !u!1001 &328729454
 PrefabInstance:
@@ -15734,8 +15734,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   levelManager: {fileID: 1566137499}
-  checkMark: {fileID: 2800000, guid: 57a00dcfcb898d14dacc54b3f9763568, type: 3}
-  failMark: {fileID: 2800000, guid: 79bf3b267039d7a4d98e6e1ec0f1962f, type: 3}
 --- !u!65 &1076126750
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -20165,8 +20163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   levelManager: {fileID: 1566137499}
-  checkMark: {fileID: 2800000, guid: 57a00dcfcb898d14dacc54b3f9763568, type: 3}
-  failMark: {fileID: 2800000, guid: 79bf3b267039d7a4d98e6e1ec0f1962f, type: 3}
 --- !u!114 &1422393361
 MonoBehaviour:
   m_ObjectHideFlags: 0

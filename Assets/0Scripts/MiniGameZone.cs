@@ -5,7 +5,7 @@ public class MiniGameZone : MonoBehaviour
 {
     [SerializeField] private MiniGameType miniGameType = MiniGameType.NULL;
     [SerializeField] private Canvas miniGameCanvas;
-    [SerializeField] private GameObject miniGame;
+    [SerializeField] private MiniGame miniGame;
 
     private Grabbable grab;
 
@@ -42,6 +42,7 @@ public class MiniGameZone : MonoBehaviour
             Debug.Log("Mini-game " + miniGameType + " started.");
             // Show the mini-game canvas
             miniGameCanvas.gameObject.SetActive(true);
+
 
             start = false; // Reset start to prevent multiple triggers
         }
