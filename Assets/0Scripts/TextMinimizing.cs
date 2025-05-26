@@ -10,7 +10,7 @@ public class TextMinimizing : MiniGame
     private string current;
     private bool comment;
 
-    private readonly string[] sentences = new string[]{ "print('Yo') % Hi", "array =    ['Yo', 'Lo']", "number = 42"};
+    private readonly string[] sentences = new string[]{ "print('Yo') % Hi", "array =    ['Yo', 'Lo']", "number = 42", "a, b = b, next"};
     // private readonly string[] solutions = new string[] { "print('Yo')", "array=['Yo','Lo']", "number=42" };
 
     // Animations
@@ -21,15 +21,14 @@ public class TextMinimizing : MiniGame
     private readonly Color correct = Color.green;
     private readonly Color wrong = Color.red;
 
-    private new void Start()
+    override public void MiniGameInit()
     {
-        base.Start();
+        base.MiniGameInit();
 
         int index = Random.Range(0, sentences.Length - 1);
         sentence.text = sentences[index];
         current = sentences[index];
         comment = false;
-        hasStarted = true;
 
         InvokeRepeating(nameof(AnimateText), 0f, 0.5f); // Alright with hardcoded here
     }
@@ -75,6 +74,11 @@ public class TextMinimizing : MiniGame
             FrameX.color = baseColor;
             FrameS.color = baseColor;
         }
+    }
+
+    new void EndMiniGame(bool win)
+    {
+        base.EndMiniGame(win);
     }
 
     void RemoveCharacter()

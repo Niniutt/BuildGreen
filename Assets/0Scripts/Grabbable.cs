@@ -80,18 +80,27 @@ public class Grabbable : NetworkBehaviour
         miniGameType.Value = mgt;
     }
 
-    [ClientRpc]
-    public void UpdateCheckClientRpc(ulong networkObjectId, bool check)
+    [ServerRpc(RequireOwnership = false)]
+    public void UpdateCheckServerRpc(ulong networkObjectId, bool check = true)
+    {
+        NetworkObject netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
+        if (netObj == null) return;
+        GameObject go = netObj.gameObject;
+
+        Grabbable grab = go.GetComponent<Grabbable>();
+        grab.isChecked.Value = true;
+        grab.isDeliveryReady.Value = check;
+        UpdateCheckClientRpc(networkObjectId, check);
+    }
+
+    [ClientRpc (RequireOwnership = false)]
+    public void UpdateCheckClientRpc(ulong networkObjectId, bool check = true)
     {
         NetworkObject netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
         if (netObj == null) return;
         GameObject go = netObj.gameObject;
         SpriteRenderer spriteRenderer = go.GetComponentInChildren<SpriteRenderer>();
         if (!spriteRenderer) return;
-
-        Grabbable grab = go.GetComponent<Grabbable>();
-        grab.isChecked.Value = true;
-        grab.isDeliveryReady.Value = check;
 
         spriteRenderer.sprite = NewSprite(check);
     }

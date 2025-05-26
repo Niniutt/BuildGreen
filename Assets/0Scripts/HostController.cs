@@ -68,8 +68,7 @@ public class HostController : NetworkBehaviour
         GameObject[] marks = GameObject.FindGameObjectsWithTag("MiniGameMark");
         if (marks.Length == 0 || marks.Length > 4)
         {
-            Debug.LogError("Failed Init: Incorrect number of mini game marks");
-            return;
+            Debug.Log("Failed Init: Incorrect number of mini game marks, length: " + marks.Length);
         }
         foreach (GameObject mark in marks)
         {
@@ -77,7 +76,6 @@ public class HostController : NetworkBehaviour
             else if (mark.name[0] == 'S') ScreenMark = mark.transform;
             else if (mark.name[0] == 'C') ChipMark = mark.transform;
             else if (mark.name[0] == 'B') BatteryMark = mark.transform;
-            mark.SetActive(false); // Hide marks initially
         }
 
         // Jump raycast init
@@ -242,7 +240,7 @@ public class HostController : NetworkBehaviour
             {
                 // Deliver
                 gridManager.Remove(go, type);
-                levelManager.DeliverOrderServerRpc(type);
+                if (grab.isDeliveryReady.Value) levelManager.DeliverOrderServerRpc(type);
                 NetworkObject no = go.GetComponent<NetworkObject>();
                 DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();
@@ -251,6 +249,13 @@ public class HostController : NetworkBehaviour
             // Stop displaying mini-game
             if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);
         }
+    }
+
+    // Grabbable object is ready for delivery (use of HostController for it's grab reference)
+    public void UpdateGrabbable()
+    {
+        ulong networkObjectId = grab.GetComponent<NetworkObject>().NetworkObjectId;
+        grab.UpdateCheckServerRpc(networkObjectId);
     }
 
     public void ToggleMiniGameMark(Type baseType)
@@ -293,10 +298,5 @@ public class HostController : NetworkBehaviour
             no.Despawn();
             Destroy(no.gameObject);
         }
-    }
-
-    public void UpdateGrabbable()
-    {
-        grab.UpdateCheckClientRpc(grab.GetComponent<NetworkObject>().NetworkObjectId, true);
     }
 }

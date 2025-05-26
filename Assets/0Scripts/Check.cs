@@ -21,7 +21,7 @@ public class Check : NetworkBehaviour
     }
 
 
-    [ServerRpc]
+    [ServerRpc (RequireOwnership = false)]
     private void CheckServerRpc(ulong networkObjectId)
     {
         NetworkObject netObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[networkObjectId];
