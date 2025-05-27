@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,7 +10,6 @@ public class TextMinimizing : MiniGame
     private bool comment;
 
     private readonly string[] sentences = new string[]{ "print('Yo') % Hi", "array =    ['Yo', 'Lo']", "number = 42", "a, b = b, next"};
-    // private readonly string[] solutions = new string[] { "print('Yo')", "array=['Yo','Lo']", "number=42" };
 
     // Animations
     [SerializeField] private TMP_Text mark;
