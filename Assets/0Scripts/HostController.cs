@@ -3,6 +3,7 @@ using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using static System.Net.Mime.MediaTypeNames;
 
 public class HostController : NetworkBehaviour
 {
@@ -138,7 +139,7 @@ public class HostController : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.G) && grab != null && grab.isGrabbed.Value && grab.type.Value == Type.EXTINGUISHER)
         {
-            Debug.Log("G pressed with extinguisher in hand");
+            BuildGreenUtils.ShowFeedback("Extinguish!!!");
             TryExtinguish();
         }
 
@@ -215,6 +216,7 @@ public class HostController : NetworkBehaviour
             grab.RequestChangeOwnershipServerRpc(OwnerClientId);
             
             grabber.hasGrabbed = true;
+            BuildGreenUtils.ShowFeedback("Grabbed!");
 
             var no = GetComponent<NetworkObject>();
             if (no != null && grab != null)
@@ -255,7 +257,9 @@ public class HostController : NetworkBehaviour
                 NetworkObject no = go.GetComponent<NetworkObject>();
                 DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();
+                BuildGreenUtils.ShowFeedback("Delivery!");
             }
+            else BuildGreenUtils.ShowFeedback("Ungrabbed.");
 
             // Stop displaying mini-game
             if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);

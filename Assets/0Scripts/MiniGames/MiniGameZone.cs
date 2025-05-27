@@ -39,7 +39,7 @@ public class MiniGameZone : MonoBehaviour
         if (start && Input.GetKeyDown(KeyCode.F))
         {
             // Signal player to stop input
-            Debug.Log("Mini-game " + miniGameType + " started.");
+            BuildGreenUtils.ShowFeedback("Mini-game started.");
             // Show the mini-game canvas
             miniGameCanvas.gameObject.SetActive(true);
             miniGame.MiniGameInit();

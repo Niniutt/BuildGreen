@@ -418,6 +418,7 @@ public class LevelManager : NetworkBehaviour
         if (!IsServer) return;
         // Correspond type with Type
         // Check if there is an order for this device
+        int index = 0;
         for (int i = 0; i < orders.Count; i++)
         {
             if (orders[i].type == type && orders[i].status == OrderStatus.RUNNING)
@@ -426,9 +427,12 @@ public class LevelManager : NetworkBehaviour
                 Order currentOrder = orders[i];
                 currentOrder.status = OrderStatus.FINISHED;
                 orders[i] = currentOrder;
+                BuildGreenUtils.ShowFeedback("Delivered!");
                 break;
             }
+            index++;
         }
+        if(index == orders.Count) BuildGreenUtils.ShowFeedback("Order wrong or incomplete.");
         // Change display
         UpdateDisplayOrders();
     }

@@ -60,14 +60,12 @@ public class MiniGame : MonoBehaviour
         
         if (win)
         {
-            Debug.Log("Mini-game win!");
-            // Get Player
+            BuildGreenUtils.ShowFeedback("Mini-game completed!");
             hostController.UpdateGrabbable();
         }
         else
         {
-            // Handle failure logic here, e.g., reset the game or notify the player
-            Debug.Log("Mini-game failed...");
+            BuildGreenUtils.ShowFeedback("Mini-game failed.");
         }
         hostController.ToggleMiniGameState();
     }

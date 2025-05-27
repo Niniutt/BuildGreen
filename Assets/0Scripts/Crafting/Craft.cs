@@ -16,6 +16,7 @@ public class Craft : NetworkBehaviour
         // If player inZone and presses F begin craft.
         if (inZone && Input.GetKeyDown(KeyCode.F))
         {
+            BuildGreenUtils.ShowFeedback("Attempting craft...");
             AssembleServerRpc();
         }
     }
@@ -42,7 +43,7 @@ public class Craft : NetworkBehaviour
         }
         if (noFound)
         {
-            Debug.Log("Invalid recipe");
+            Debug.Log("Invalid recipe!");
         }
         else
         {
