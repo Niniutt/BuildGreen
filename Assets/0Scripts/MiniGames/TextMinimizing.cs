@@ -74,11 +74,6 @@ public class TextMinimizing : MiniGame
         }
     }
 
-    new void EndMiniGame(bool win)
-    {
-        base.EndMiniGame(win);
-    }
-
     void RemoveCharacter()
     {
         current = current.Substring(1);

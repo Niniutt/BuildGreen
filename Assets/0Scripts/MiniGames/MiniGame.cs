@@ -1,11 +1,11 @@
 using TMPro;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MiniGame : MonoBehaviour
 {
     private readonly int gameDurationConst = 20;
+    private HostController hostController;
 
     private int gameDuration = 10;
     private int timer = 0;
@@ -23,6 +23,9 @@ public class MiniGame : MonoBehaviour
 
     virtual public void MiniGameInit()
     {
+        if (!hostController) hostController = GetHostController(NetworkManager.Singleton.LocalClientId);
+        hostController.ToggleMiniGameState();
+
         gameDuration = gameDurationConst;
         score = 0;
         errors = 0;
@@ -48,7 +51,6 @@ public class MiniGame : MonoBehaviour
         }
     }
 
-    // MAKE THIS SERVER RPC
     public void EndMiniGame(bool win)
     {
         hasStarted = false;
@@ -60,14 +62,14 @@ public class MiniGame : MonoBehaviour
         {
             Debug.Log("Mini-game win!");
             // Get Player
-            HostController hc = GetHostController(NetworkManager.Singleton.LocalClientId);
-            hc.UpdateGrabbable();
+            hostController.UpdateGrabbable();
         }
         else
         {
             // Handle failure logic here, e.g., reset the game or notify the player
             Debug.Log("Mini-game failed...");
         }
+        hostController.ToggleMiniGameState();
     }
 
     public void UpdateTime()

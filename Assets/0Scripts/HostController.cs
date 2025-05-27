@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class HostController : NetworkBehaviour
 {
@@ -48,6 +49,7 @@ public class HostController : NetworkBehaviour
     private Transform ScreenMark;
     private Transform ChipMark;
     private Transform BatteryMark;
+    private bool inMiniGame = false;
 
     public override void OnNetworkSpawn()
     {
@@ -145,7 +147,7 @@ public class HostController : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        MovePlayer();
+        if (!inMiniGame) MovePlayer();
         JumpPhysics();
 
         if (grab != null && grab.isGrabbed.Value)
@@ -297,16 +299,22 @@ public class HostController : NetworkBehaviour
         StartCoroutine(DespawnAndDestroyWithDelay(networkObjectId, destroyDelay));
     }
 
-    private System.Collections.IEnumerator DespawnAndDestroyWithDelay(ulong networkObjectId, float delay)
+    private IEnumerator DespawnAndDestroyWithDelay(ulong networkObjectId, float delay)
     {
         yield return new WaitForSeconds(delay);
-
         if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out var no) && no != null)
         {
             no.Despawn();
             Destroy(no.gameObject);
         }
     }
+
+    public void ToggleMiniGameState()
+    {
+        inMiniGame = !inMiniGame;
+    }
+
+    // FIIIIIRE
     [ServerRpc(RequireOwnership = false)]
     private void ExtinguishFireServerRpc(ulong networkObjectId)
     {
@@ -316,7 +324,6 @@ public class HostController : NetworkBehaviour
             Destroy(no.gameObject);
         }
     }
-
 
     private List<Vector3> GetForwardGridPositions()
     {

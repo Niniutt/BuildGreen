@@ -82,8 +82,6 @@ public class SearchAlgo : MiniGame
 
     private void Start()
     {
-        MiniGameInit(); // Temporary: Test
-
         // Add onclick to all frames that call CheckAnswer
         for (int i = 0; i < optionButtons.Length; i++)
         {
@@ -185,11 +183,6 @@ public class SearchAlgo : MiniGame
                     break;
             }
         }
-    }
-
-    new void EndMiniGame(bool win)
-    {
-        base.EndMiniGame(win);
     }
 }
 

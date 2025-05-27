@@ -31,6 +31,7 @@ public enum MiniGameType
     FILE_TYPE = 0,
     MINIMIZING = 1,
     SEARCH_ALGO = 2,
+    DARK_MODE = 3,
     NULL = 999,
 }
 
@@ -85,13 +86,13 @@ public class RecipesSO : ScriptableObject
         switch (ingredientType)
         {
             case Type.SCREEN:
-                return MiniGameType.SEARCH_ALGO;
+                return MiniGameType.FILE_TYPE;
             case Type.CHIP:
                 return MiniGameType.SEARCH_ALGO;
             case Type.DISK:
                 return MiniGameType.MINIMIZING;
             case Type.BATTERY:
-                return MiniGameType.SEARCH_ALGO; // To be changed later
+                return MiniGameType.DARK_MODE;
             default:
                 break;
         }
