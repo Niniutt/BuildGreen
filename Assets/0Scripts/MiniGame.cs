@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class MiniGame : MonoBehaviour
 {
-    private readonly int gameDurationConst = 10;
+    private readonly int gameDurationConst = 20;
 
     private int gameDuration = 10;
     private int timer = 0;
