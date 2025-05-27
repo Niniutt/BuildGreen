@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Craft : NetworkBehaviour
 {
+    [SerializeField] private LevelManager levelManager;
     [SerializeField] private GridManager gridManager;
     [SerializeField] private RecipesSO recipesSO;
     
@@ -44,10 +45,12 @@ public class Craft : NetworkBehaviour
         if (noFound)
         {
             Debug.Log("Invalid recipe!");
+            levelManager.LogServerRpc(0, 0, 0, 1);
         }
         else
         {
             gridManager.Assemble(output);
+            levelManager.LogServerRpc(0, 0, 1);
         }
     }
 

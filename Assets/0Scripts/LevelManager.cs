@@ -56,6 +56,7 @@ public class LevelManager : NetworkBehaviour
     [SerializeField] private GridManager gridManager;
     [SerializeField] private Canvas canvas;
     [SerializeField] private RecipesSO recipesSO;
+
     public GameObject UIPrefab;
     private GameObject[] UIorders = new GameObject[MAX_ORDERS];
 
@@ -428,13 +429,38 @@ public class LevelManager : NetworkBehaviour
                 currentOrder.status = OrderStatus.FINISHED;
                 orders[i] = currentOrder;
                 BuildGreenUtils.ShowFeedback("Delivered!");
+                LogServerRpc(1, 0, 0, 0);
                 break;
             }
             index++;
         }
-        if(index == orders.Count) BuildGreenUtils.ShowFeedback("Order wrong or incomplete.");
+        if (index == orders.Count) {
+            BuildGreenUtils.ShowFeedback("Order wrong or incomplete.");
+            LogServerRpc(0, 1, 0, 0);
+        }
         // Change display
         UpdateDisplayOrders();
+    }
+
+    [SerializeField] private TMP_Text logText;
+    private int successfulOrders = 0;
+    private int failedOrders = 0;
+    private int successfulCrafts = 0;
+    private int failedCrafts = 0;
+    private int successfulMG = 0;
+    private int failedMG = 0;
+
+    [ServerRpc(RequireOwnership = false)]
+    public void LogServerRpc(int so, int fo, int sc = 0, int fc = 0, int sm = 0, int fm = 0)
+    {
+        successfulOrders += so;
+        failedOrders += fo;
+        successfulCrafts += sc;
+        failedCrafts += fc;
+        successfulMG += sm;
+        failedMG += fm;
+        logText.text = successfulOrders + " " + failedOrders + " " + successfulCrafts + " " + failedCrafts +
+            " " + successfulMG + " " + failedMG;
     }
 
     #endregion

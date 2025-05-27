@@ -29,9 +29,9 @@ public class MiniGameZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            start = false;
             grab = null;
         }
+        start = false;
     }
 
     private void Update()

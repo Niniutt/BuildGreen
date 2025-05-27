@@ -2,10 +2,11 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-public class MiniGame : MonoBehaviour
+public class MiniGame : NetworkBehaviour
 {
     private readonly int gameDurationConst = 20;
     private HostController hostController;
+    private LevelManager levelManager;
 
     private int gameDuration = 10;
     private int timer = 0;
@@ -20,6 +21,12 @@ public class MiniGame : MonoBehaviour
     [SerializeField] private TMP_Text timeUI;
     [SerializeField] private TMP_Text scoreUI;
     [SerializeField] private TMP_Text errorUI;
+
+    private void Awake()
+    {
+        levelManager = FindFirstObjectByType<LevelManager>();
+        Debug.Log("LevelManager found: " + (levelManager != null));
+    }
 
     virtual public void MiniGameInit()
     {
@@ -55,16 +62,23 @@ public class MiniGame : MonoBehaviour
     {
         hasStarted = false;
         gameObject.SetActive(false);
+        if (levelManager == null)
+        {
+            Debug.Log("Loading levelManager once more");
+            levelManager = FindFirstObjectByType<LevelManager>();
+        }
 
         CancelInvoke(nameof(UpdateMiniGame));
         
         if (win)
         {
             BuildGreenUtils.ShowFeedback("Mini-game completed!");
+            levelManager.LogServerRpc(0,0,0,0,1,0);
             hostController.UpdateGrabbable();
         }
         else
         {
+            levelManager.LogServerRpc(0, 0, 0, 0, 0, 1);
             BuildGreenUtils.ShowFeedback("Mini-game failed.");
         }
         hostController.ToggleMiniGameState();

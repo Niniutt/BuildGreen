@@ -65,9 +65,9 @@ public class SearchAlgo : MiniGame
             new Option("■", ShapeDescriptor.Square),
             new Option("▲", ShapeDescriptor.Triangle, true, 1),
             new Option("red", ShapeDescriptor.Red, true, 0),
-            new Option("●", ShapeDescriptor.Circle),
             new Option("yellow", ShapeDescriptor.Yellow),
-            new Option("blue", ShapeDescriptor.Blue, true, 1),
+            new Option("●", ShapeDescriptor.Circle, true, 2),
+            new Option("■", ShapeDescriptor.Square),
         }
     };
     // ■●

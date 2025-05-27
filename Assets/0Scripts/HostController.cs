@@ -254,6 +254,7 @@ public class HostController : NetworkBehaviour
                 // Deliver
                 gridManager.Remove(go, type);
                 if (grab.isDeliveryReady.Value) levelManager.DeliverOrderServerRpc(type);
+                else levelManager.LogServerRpc(0, 1, 0, 0);
                 NetworkObject no = go.GetComponent<NetworkObject>();
                 DestroyServerRpc(go.GetComponent<NetworkObject>().NetworkObjectId);
                 grabber.ResetGrabber();
