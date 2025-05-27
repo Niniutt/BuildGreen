@@ -76,8 +76,8 @@ public class Grabbable : NetworkBehaviour
         // Choose random ingredient
         Type ingredientType = ingredients[Random.Range(0, ingredients.Count)];
         MiniGameType mgt = recipesSO.GetMiniGameType(ingredientType);
-        miniGameBase.Value = ingredientType;
-        miniGameType.Value = mgt;
+        miniGameBase.Value = Type.CHIP; // Temp
+        miniGameType.Value = MiniGameType.SEARCH_ALGO;
     }
 
     [ServerRpc(RequireOwnership = false)]

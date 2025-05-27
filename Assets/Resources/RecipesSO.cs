@@ -81,21 +81,20 @@ public class RecipesSO : ScriptableObject
     public MiniGameType GetMiniGameType(Type ingredientType)
     {
         // Choose mini-game type based on the ingredient
-        return MiniGameType.MINIMIZING; // Temporary
-        /*switch (ingredientType)
+        // return MiniGameType.MINIMIZING; // Temporary
+        switch (ingredientType)
         {
             case Type.SCREEN:
-                return MiniGameType.FILE_TYPE;
+                return MiniGameType.SEARCH_ALGO;
             case Type.CHIP:
                 return MiniGameType.SEARCH_ALGO;
             case Type.DISK:
                 return MiniGameType.MINIMIZING;
             case Type.BATTERY:
-                return MiniGameType.MINIMIZING; // To be changed later
+                return MiniGameType.SEARCH_ALGO; // To be changed later
             default:
                 break;
         }
         return MiniGameType.NULL;
-        */
     }
 }

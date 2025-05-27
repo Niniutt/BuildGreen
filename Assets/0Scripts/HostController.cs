@@ -271,9 +271,6 @@ public class HostController : NetworkBehaviour
 
     public void ToggleMiniGameMark(Type baseType)
     {
-        DiskMark.gameObject.SetActive(!DiskMark.gameObject.activeSelf);
-        return;
-        /* // Temporary
         switch (baseType)
         {
             case Type.DISK:
@@ -291,7 +288,7 @@ public class HostController : NetworkBehaviour
             default:
                 Debug.LogWarning("Unknown type for mini-game mark: " + baseType);
                 break;
-        }*/
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -346,15 +343,15 @@ public class HostController : NetworkBehaviour
         for (float i = 0.5f; i <= range; i += 0.5f)
         {
             Vector3 checkPos = gridManager.GetSnappedPosition(origin + direction * i);
-            Debug.Log("Checking position: " + checkPos);
+            // Debug.Log("Checking position: " + checkPos);
 
             Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f);
             foreach (var col in colliders)
             {
-                Debug.Log("Found collider: " + col.name);
+                // Debug.Log("Found collider: " + col.name);
                 if (col.CompareTag("Fire"))
                 {
-                    Debug.Log("Fire found! Requesting server to extinguish");
+                    // Debug.Log("Fire found! Requesting server to extinguish");
                     var netObj = col.GetComponent<NetworkObject>();
                     if (netObj != null)
                     {

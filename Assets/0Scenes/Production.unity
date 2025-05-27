@@ -27087,7 +27087,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   miniGameType: 2
   miniGameCanvas: {fileID: 670753232}
-  miniGame: {fileID: 0}
+  miniGame: {fileID: 670753229}
   start: 0
 --- !u!1 &1778316588
 GameObject:
