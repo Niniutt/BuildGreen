@@ -119,7 +119,12 @@ public class LevelManager : NetworkBehaviour
         for (int i = 0; i < MAX_ORDERS; i++)
         {
             GameObject UIorder = Instantiate(UIPrefab, canvas.transform);
-            UIorder.transform.position += new Vector3(i * 120, 0, 0);
+            RectTransform rectTransform = UIorder.GetComponent<RectTransform>();
+            // Change anchor preset to top left
+            rectTransform.anchorMin = new Vector2(0, 1);
+            rectTransform.anchorMax = new Vector2(0, 1);
+            rectTransform.anchoredPosition = new Vector2(140 + 220 * i, -130);
+
             UIorder.SetActive(false); // Deactivate all before they pop again
             UIorders[i] = UIorder;
         }
