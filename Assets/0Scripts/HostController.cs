@@ -1,13 +1,13 @@
 using UnityEngine;
 using Unity.Netcode;
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine.UI;
-using static System.Net.Mime.MediaTypeNames;
+using UnityEditorInternal;
+using UnityEditor.Animations;
 
 public class HostController : NetworkBehaviour
 {
     [SerializeField] GameObject cameraPrefab;
+    [SerializeField] private Animator animator;
     private BoxCollider boxCollider;
     private Grabbable grab;
     private GridManager gridManager;
@@ -22,13 +22,10 @@ public class HostController : NetworkBehaviour
 
     private readonly float speed = 7.0f;
     private readonly float rotationSpeed = 0.1f;
-    // private readonly float sensitivity = 1.0f;
     private readonly float jumpForce = 8.0f;
 
     private Vector3 moveInput;
-    // private Vector2 mouseInput;
     private Vector3 move = new();
-    // private Vector2 rotate = new();
 
     private readonly float fallMultiplier = 2.5f;
     private readonly float ascendMultiplier = 2f;
@@ -41,8 +38,8 @@ public class HostController : NetworkBehaviour
     [HideInInspector] public LayerMask groundLayer;
     [HideInInspector] public bool firstPerson = false;
 
-    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -1.5f);// (0f, 9f, -3f);
-    // private float thirdPersonRotationX = 75f;
+    private Vector3 thirdPersonCameraPosition = new Vector3(0f, 6f, -3f);
+    private Vector3 centerPosition = new Vector3(0f, 0.5f, 0f);
 
     private float destroyDelay = 0.5f;
 
@@ -51,6 +48,8 @@ public class HostController : NetworkBehaviour
     private Transform ChipMark;
     private Transform BatteryMark;
     private bool inMiniGame = false;
+
+    
 
     public override void OnNetworkSpawn()
     {
@@ -85,10 +84,6 @@ public class HostController : NetworkBehaviour
         // Jump raycast init
         playerHeight = boxCollider.size.y * transform.localScale.y;
         raycastDistance = (playerHeight / 2) + 0.2f;
-
-        // Hide mouse
-        // Cursor.lockState = CursorLockMode.Locked;
-        // Cursor.visible = false;
 
         AudioListener cameraAL = thirdPersonCamera.GetComponent<AudioListener>();
         if (IsOwner)
@@ -136,14 +131,6 @@ public class HostController : NetworkBehaviour
             grabberPosition = grabber.transform.position;
             grabberRotation = transform.rotation;
         }
-
-        if (Input.GetKeyDown(KeyCode.G) && grab != null && grab.isGrabbed.Value && grab.type.Value == Type.EXTINGUISHER)
-        {
-            BuildGreenUtils.ShowFeedback("Extinguish!!!");
-            TryExtinguish();
-        }
-
-
     }
 
     private void FixedUpdate()
@@ -159,7 +146,7 @@ public class HostController : NetworkBehaviour
 
     private void MovePlayer()
     {
-        move = moveInput; // transform.TransformDirection(moveInput);
+        move = moveInput;
         // If there is input, rotate player in movement direction
         if (move != new Vector3() && IsOwner) 
         {
@@ -170,19 +157,16 @@ public class HostController : NetworkBehaviour
         }
         ;
         move = move * speed;
+        Debug.Log(move.magnitude);
+        animator.SetFloat("Speed", move.magnitude);
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }
 
     private void MovePlayerCamera()
     {
         thirdPersonCamera.transform.position = transform.position + thirdPersonCameraPosition;
-        /*
-        rotate.x = mouseInput.x * sensitivity;
-        rotate.y -= Mathf.Clamp(mouseInput.y * sensitivity, -90f, 90f);
-        transform.Rotate(0, rotate.x, 0);
-
-        cameraTransform.localRotation = Quaternion.Euler(rotate.y, 0, 0);
-        */
+        centerPosition.y = thirdPersonCamera.transform.position.y;
+        thirdPersonCamera.transform.position = (centerPosition + thirdPersonCamera.transform.position) / 2f;
     }
 
     private void Jump()
@@ -226,6 +210,12 @@ public class HostController : NetworkBehaviour
 
             // Display mini-game if there is one
             if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);
+
+            // Set animator's Grabbed parameter to true
+            if (animator != null)
+            {
+                animator.SetBool("Grabbed", true);
+            }
         }
     }
 
@@ -264,6 +254,12 @@ public class HostController : NetworkBehaviour
 
             // Stop displaying mini-game
             if (grab.miniGameBase.Value != Type.NULL) ToggleMiniGameMark(grab.miniGameBase.Value);
+
+            // Set animator's Grabbed parameter to false
+            if (animator != null)
+            {
+                animator.SetBool("Grabbed", false);
+            }
         }
     }
 
@@ -317,60 +313,5 @@ public class HostController : NetworkBehaviour
     public void ToggleMiniGameState()
     {
         inMiniGame = !inMiniGame;
-    }
-
-    // FIIIIIRE
-    [ServerRpc(RequireOwnership = false)]
-    private void ExtinguishFireServerRpc(ulong networkObjectId)
-    {
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out var no))
-        {
-            no.Despawn();
-            Destroy(no.gameObject);
-        }
-    }
-
-    private List<Vector3> GetForwardGridPositions()
-    {
-        List<Vector3> positions = new();
-        Vector3 forward = transform.forward.normalized;
-        Vector3 origin = transform.position;
-
-        for (int i = 1; i <= 3; i++)
-        {
-            Vector3 checkPos = origin + forward * i;
-            Vector3 snapped = gridManager.GetSnappedPosition(checkPos);
-            positions.Add(snapped);
-        }
-
-        return positions;
-    }
-
-    private void TryExtinguish()
-    {
-        Vector3 origin = transform.position;
-        Vector3 direction = transform.forward;
-        float range = 1.5f;
-
-        for (float i = 0.5f; i <= range; i += 0.5f)
-        {
-            Vector3 checkPos = gridManager.GetSnappedPosition(origin + direction * i);
-            // Debug.Log("Checking position: " + checkPos);
-
-            Collider[] colliders = Physics.OverlapSphere(checkPos, 0.4f);
-            foreach (var col in colliders)
-            {
-                // Debug.Log("Found collider: " + col.name);
-                if (col.CompareTag("Fire"))
-                {
-                    // Debug.Log("Fire found! Requesting server to extinguish");
-                    var netObj = col.GetComponent<NetworkObject>();
-                    if (netObj != null)
-                    {
-                        ExtinguishFireServerRpc(netObj.NetworkObjectId);
-                    }
-                }
-            }
-        }
     }
 }

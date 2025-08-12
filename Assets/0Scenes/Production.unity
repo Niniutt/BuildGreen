@@ -10555,6 +10555,7 @@ GameObject:
   - component: {fileID: 624035610}
   - component: {fileID: 624035609}
   - component: {fileID: 624035608}
+  - component: {fileID: 624035613}
   - component: {fileID: 624035612}
   m_Layer: 5
   m_Name: DarkModeCanvas
@@ -10672,6 +10673,31 @@ MonoBehaviour:
   b: {fileID: 637814885}
   color: {fileID: 1146786901}
   solution: {fileID: 987420203}
+--- !u!114 &624035613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 624035606}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 219274756
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &624846064
 GameObject:
   m_ObjectHideFlags: 0
@@ -16492,7 +16518,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5206668379868315107, guid: 817319833dd713d45af5c2121e9649c7, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -67.3
+      value: -67.29999
       objectReference: {fileID: 0}
     - target: {fileID: 5206668379868315107, guid: 817319833dd713d45af5c2121e9649c7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -26569,7 +26595,6 @@ MonoBehaviour:
   plasticPrefab: {fileID: 4539595539355770399, guid: a12183c60f66e49419e59805c6f3301e, type: 3}
   glassPrefab: {fileID: 1507134905040551447, guid: ea81425b89783bc4799a4156335e7828, type: 3}
   firePrefab: {fileID: 3237362734634395931, guid: e8103e4d77aff444e82e26585acaf23a, type: 3}
-  FireSpawnPoints: []
   logText: {fileID: 1653805332}
 --- !u!114 &1566137500
 MonoBehaviour:
@@ -30035,7 +30060,7 @@ MonoBehaviour:
   m_MaxConnectAttempts: 60
   m_DisconnectTimeoutMS: 30000
   ConnectionData:
-    Address: 192.168.1.151
+    Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 0.0.0.0
   DebugSimulator:
